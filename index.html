@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <title>Valaya Stores - Advanced Costing Suite</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Valaya Stores — Intelligent Costing & Billing Suite</h1>
+    </header>
+    
+    <div class="test-accelerator-banner">
+        <button id="btn-auto-test">⚡ Inject Master Demo Test Data (Go Crazy!)</button>
+    </div>
+
+    <main class="three-column-container">
+        <section class="panel column-left">
+            <h2>Control Panel</h2>
+            
+            <div class="inventory-section backup-box">
+                <h3>💾 Database Backup & Disaster Recovery</h3>
+                <p class="help-text">Save this backup file to your computer. If your browser cache gets cleared, upload the file to restore everything instantly!</p>
+                <div class="backup-buttons">
+                    <button id="btn-export-json" class="btn-blue-outline">📤 Export System Backup File</button>
+                    <label for="btn-import-json" class="custom-file-upload">📥 Import Backup File</label>
+                    <input type="file" id="btn-import-json" accept=".json">
+                </div>
+            </div>
+
+            <div class="inventory-section">
+                <h3>Manage Raw Materials</h3>
+                <form id="form-raw-material">
+                    <input type="text" placeholder="Material Name" id="rm-name" required>
+                    <select id="rm-unit-select" required>
+                        <option value="" disabled selected>Select Unit</option>
+                        <option value="Pcs">Pcs</option>
+                        <option value="Grm">Grm</option>
+                        <option value="Mtr">Mtr</option>
+                        <option value="Reel">Reel</option>
+                    </select>
+                    <input type="number" step="any" placeholder="Pack Qty" id="rm-pack-qty" required>
+                    <input type="number" step="0.01" placeholder="Total Cost (₹)" id="rm-pack-cost" required>
+                    <input type="number" step="any" placeholder="Current Stock Qty" id="rm-stock" required>
+                    <button type="submit">Add Material</button>
+                </form>
+                <div class="table-wrapper">
+                    <table id="table-raw-materials"></table>
+                </div>
+            </div>
+            
+            <div class="inventory-section">
+                <h3>Labor Rates</h3>
+                <form id="form-labor">
+                    <input type="text" placeholder="Person Name" id="labor-name" required>
+                    <input type="number" step="0.01" placeholder="Hourly Rate (₹)" id="labor-rate" required>
+                    <button type="submit">Add Labor</button>
+                </form>
+                <div class="table-wrapper">
+                    <table id="table-labor"></table>
+                </div>
+            </div>
+
+            <div class="inventory-section">
+                <h3>Packing Supplies</h3>
+                <form id="form-packing">
+                    <input type="text" placeholder="Item Name" id="packing-name" required>
+                    <input type="text" placeholder="Unit (e.g. Box)" id="packing-unit" required>
+                    <input type="number" step="0.01" placeholder="Price/Unit (₹)" id="packing-price" required>
+                    <button type="submit">Add Packing</button>
+                </form>
+                <div class="table-wrapper">
+                    <table id="table-packing"></table>
+                </div>
+            </div>
+            
+            <div class="saved-bills-section">
+                <h3>Saved Bill Database</h3>
+                <div class="search-export-row">
+                    <input type="text" id="search-saved-bills" placeholder="Search invoices...">
+                    <button id="btn-export-csv" title="Export Ledger to CSV">📊 CSV Export</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="table-saved-bills">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="analytics-section">
+                <h3>📊 Valaya Stores Business Analytics</h3>
+                <div class="analytics-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">Gross Revenue</span>
+                        <span id="stat-revenue" class="stat-val">₹0.00</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Net Profit</span>
+                        <span id="stat-profit" class="stat-val profit-green">₹0.00</span>
+                    </div>
+                </div>
+                <div class="stat-card single-wide">
+                    <span class="stat-label">Top Selling Catalog Design Product</span>
+                    <span id="stat-popular" class="stat-val option-blue">None Tracked</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel column-middle">
+            <h2>Invoice Creator</h2>
+            <div class="invoice-header-form">
+                <div class="form-row">
+                    <div>
+                        <label>Customer Name:</label>
+                        <input type="text" id="customer-name" placeholder="Kiran Kumar">
+                    </div>
+                    <div>
+                        <label>WhatsApp Phone Number:</label>
+                        <input type="text" id="customer-phone" placeholder="919876543210">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label>Product Name (Finished Set Design):</label>
+                        <input type="text" id="product-name" placeholder="Bridal Silk Kada Set">
+                    </div>
+                    <div>
+                        <label class="highlight-label">🔥 Set Order Quantity Multiplier:</label>
+                        <input type="number" id="product-order-qty" min="1" value="1" class="multiplier-input">
+                    </div>
+                </div>
+                <div>
+                    <label>Shipping Destination Address:</label>
+                    <input type="text" id="customer-address" placeholder="Enter complete shipping destination address">
+                </div>
+                <div>
+                    <label>Customization & Processing Notes:</label>
+                    <textarea id="order-notes" rows="2" placeholder="Special sizes, color combinations, or gemstone requests..."></textarea>
+                </div>
+            </div>
+
+            <div class="item-adder-block">
+                <h3>Single-Set Material & Workmanship Blueprint</h3>
+                <p class="help-text-small">Design the recipe for <strong>ONE SINGLE SET</strong>. The multiplier box above scales everything automatically!</p>
+                <div class="adder-controls">
+                    <select id="item-type-select">
+                        <option value="raw-material">Raw Material</option>
+                        <option value="labor">Labor Rate</option>
+                        <option value="packing">Packing Supply</option>
+                    </select>
+                    <select id="item-select"></select>
+                    <input type="number" id="item-quantity" placeholder="Qty/Hrs" min="0" step="any">
+                    <button id="btn-add-item">Add Item</button>
+                </div>
+            </div>
+
+            <table id="invoice-items-table" class="internal-breakdown-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Item Description</th>
+                        <th>Qty (Per Set)</th>
+                        <th>Scaled Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <div class="margin-controls-card">
+                <h3>Financial Margins & Live Tracking</h3>
+                
+                <div class="detailed-subtotals-strip">
+                    <div class="subtotal-pill">
+                        <span class="pill-lbl">Raw Materials</span>
+                        <span id="live-sub-raw" class="pill-val">₹0.00</span>
+                    </div>
+                    <div class="subtotal-pill">
+                        <span class="pill-lbl">Labor Cost</span>
+                        <span id="live-sub-labor" class="pill-val">₹0.00</span>
+                    </div>
+                    <div class="subtotal-pill">
+                        <span class="pill-lbl">Packing Supplies</span>
+                        <span id="live-sub-packing" class="pill-val">₹0.00</span>
+                    </div>
+                </div>
+
+                <div class="live-card-row">
+                    <div class="input-block">
+                        <label>Other Expenses (% of Raw Material):</label>
+                        <div class="inline-inputs">
+                            <select id="expense-percentage-select">
+                                <option value="0.05">5%</option>
+                                <option value="0.10" selected>10%</option>
+                                <option value="0.15">15%</option>
+                                <option value="0.20">20%</option>
+                                <option value="custom">Other...</option>
+                            </select>
+                            <input type="number" id="custom-expense-input" class="custom-input" placeholder="%">
+                        </div>
+                    </div>
+                    <div class="value-display-block">
+                        <span class="label-sub">Expense Value</span>
+                        <span id="live-expense-val" class="calculated-rupee">₹0.00</span>
+                    </div>
+                </div>
+
+                <div class="live-card-row">
+                    <div class="input-block">
+                        <label>Profit Target Margin (%):</label>
+                        <div class="inline-inputs">
+                            <select id="profit-percentage-select">
+                                <option value="0.10">10%</option>
+                                <option value="0.15">15%</option>
+                                <option value="0.20" selected>20%</option>
+                                <option value="0.30">30%</option>
+                                <option value="0.50">50%</option>
+                                <option value="custom">Other...</option>
+                            </select>
+                            <input type="number" id="custom-profit-input" class="custom-input" placeholder="%">
+                        </div>
+                    </div>
+                    <div class="value-display-block">
+                        <span class="label-sub">Net Profit Markup</span>
+                        <span id="live-profit-val" class="calculated-rupee">₹0.00</span>
+                    </div>
+                </div>
+
+                <div class="live-card-row simple-split">
+                    <div>
+                        <label>Courier/Shipping Charges (₹):</label>
+                        <input type="number" id="courier-input" placeholder="0.00" min="0" step="any">
+                    </div>
+                    <div>
+                        <label>Special Bill Discount (₹):</label>
+                        <input type="number" id="discount-input" placeholder="0.00" min="0" step="any">
+                    </div>
+                </div>
+
+                <div class="live-card-total-strip">
+                    <span>LIVE TOTAL WORKSPACE DUE:</span>
+                    <span id="live-grand-total">₹0.00</span>
+                </div>
+            </div>
+
+            <div class="action-buttons-rack">
+                <button id="btn-save-bill" class="btn-blue">Save State to History</button>
+                <button id="btn-new-bill" class="btn-gray">Reset Workspace</button>
+            </div>
+        </section>
+
+        <section class="panel column-right">
+            <h2>Customer Preview</h2>
+            <div class="customer-invoice-document" id="invoice-print-area">
+                <div class="bill-doc-header">
+                    <div class="brand-title">Valaya Store</div>
+                    <div class="brand-subtitle">Exquisite Handcrafted Custom Bangles</div>
+                    <div class="bill-meta-line">
+                        <span><strong>Bill ID:</strong> <span id="lbl-bill-id"></span></span>
+                        <span><strong>Date:</strong> <span id="lbl-bill-date"></span></span>
+                    </div>
+                </div>
+                
+                <div class="bill-doc-section">
+                    <strong>Billed To:</strong>
+                    <div id="lbl-customer-name" class="empty-placeholder">No Customer Selected</div>
+                    <div id="lbl-customer-phone"></div>
+                    <div id="lbl-customer-address"></div>
+                </div>
+
+                <div class="bill-doc-section">
+                    <table class="customer-clean-table">
+                        <thead>
+                            <tr>
+                                <th>Product Details</th>
+                                <th style="text-align: right;">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div id="lbl-product-title" style="font-weight: bold;">No Product Configured</div>
+                                    <div id="lbl-product-notes" style="font-size: 0.85rem; color: #666; font-style: italic;"></div>
+                                </td>
+                                <td id="lbl-product-base-price" style="text-align: right; font-weight: bold;">₹0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="bill-doc-summary-block">
+                    <div class="doc-summary-row">
+                        <span>Product Base Value:</span>
+                        <span id="lbl-summary-base">₹0.00</span>
+                    </div>
+                    <div class="doc-summary-row" id="row-lbl-courier">
+                        <span>Courier & Delivery Fees:</span>
+                        <span id="lbl-summary-courier">₹0.00</span>
+                    </div>
+                    <div class="doc-summary-row" id="row-lbl-discount">
+                        <span>Special Store Deduction:</span>
+                        <span id="lbl-summary-discount">-₹0.00</span>
+                    </div>
+                    <div class="doc-summary-row total-row">
+                        <span>GRAND TOTAL PAYABLE:</span>
+                        <span id="lbl-summary-grand">₹0.00</span>
+                    </div>
+                </div>
+                
+                <div class="bill-doc-footer">
+                    Thank you for supporting hand-crafted art! ✨<br>
+                    Follow us on Instagram for new catalog models: <strong>@valaya_store</strong>
+                </div>
+            </div>
+
+            <div class="customer-view-actions">
+                <button id="btn-print-bill" class="btn-blue-outline">🖨️ Print Pure Paper Invoice</button>
+                <button id="btn-whatsapp-bill" class="btn-whatsapp">💬 Share Bill via WhatsApp Business</button>
+            </div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
