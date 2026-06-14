@@ -150,6 +150,12 @@
                     <textarea id="order-notes" rows="2" placeholder="Special sizes, color combinations, or gemstone requests..."></textarea>
                 </div>
             </div>
+            
+            <div style="margin-top: 15px;">
+                <button id="btn-add-product-to-list" type="button" style="background: #6366f1; color: white; padding: 12px; width: 100%; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem;">
+                    ➕ Add This Item to Final Bill
+                </button>
+            </div>
 
             <div class="item-adder-block">
                 <h3>Single-Set Material & Workmanship Blueprint</h3>
@@ -195,6 +201,11 @@
                         <span class="pill-lbl">Packing Supplies</span>
                         <span id="live-sub-packing" class="pill-val">₹0.00</span>
                     </div>
+                </div>
+
+                <div class="production-total-row">
+                    <span>Current Item Making Cost:</span>
+                    <span id="live-production-subtotal">₹0.00</span>
                 </div>
 
                 <div class="live-card-row">
@@ -250,19 +261,19 @@
                 </div>
 
                 <div class="live-card-total-strip">
-                    <span>LIVE TOTAL WORKSPACE DUE:</span>
+                    <span>PRICE FOR THIS ITEM:</span>
                     <span id="live-grand-total">₹0.00</span>
                 </div>
             </div>
 
             <div class="action-buttons-rack">
-                <button id="btn-save-bill" class="btn-blue">Save State to History</button>
+                <button id="btn-save-bill" class="btn-blue">Final Save & Update History</button>
                 <button id="btn-new-bill" class="btn-gray">Reset Workspace</button>
             </div>
         </section>
 
         <section class="panel column-right">
-            <h2>Customer Preview</h2>
+            <h2>Final Customer Preview</h2>
             <div class="customer-invoice-document" id="invoice-print-area">
                 <div class="bill-doc-header">
                     <div class="brand-title">Valaya Store</div>
@@ -288,21 +299,15 @@
                                 <th style="text-align: right;">Amount</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div id="lbl-product-title" style="font-weight: bold;">No Product Configured</div>
-                                    <div id="lbl-product-notes" style="font-size: 0.85rem; color: #666; font-style: italic;"></div>
-                                </td>
-                                <td id="lbl-product-base-price" style="text-align: right; font-weight: bold;">₹0.00</td>
-                            </tr>
+                        <tbody id="bill-items-body">
+                            <!-- Items list here -->
                         </tbody>
                     </table>
                 </div>
 
                 <div class="bill-doc-summary-block">
                     <div class="doc-summary-row">
-                        <span>Product Base Value:</span>
+                        <span>Items Subtotal:</span>
                         <span id="lbl-summary-base">₹0.00</span>
                     </div>
                     <div class="doc-summary-row" id="row-lbl-courier">
@@ -321,13 +326,13 @@
                 
                 <div class="bill-doc-footer">
                     Thank you for supporting hand-crafted art! ✨<br>
-                    Follow us on Instagram for new catalog models: <strong>@valaya_store</strong>
+                    Follow us on Instagram: <strong>@valaya_store</strong>
                 </div>
             </div>
 
             <div class="customer-view-actions">
-                <button id="btn-print-bill" class="btn-blue-outline">🖨️ Print Pure Paper Invoice</button>
-                <button id="btn-whatsapp-bill" class="btn-whatsapp">💬 Share Bill via WhatsApp Business</button>
+                <button id="btn-print-bill" class="btn-blue-outline">🖨️ Print Invoice</button>
+                <button id="btn-whatsapp-bill" class="btn-whatsapp">💬 Share via WhatsApp</button>
             </div>
         </section>
     </main>
