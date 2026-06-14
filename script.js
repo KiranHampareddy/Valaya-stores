@@ -1,8 +1,183 @@
 // --- SYSTEM LOCAL RECOVERY & DATA STRUCTURE CACHES ---
-let inventory = JSON.parse(localStorage.getItem('valaya_inv_v3')) || { rawMaterials: [], labor: [], packing: [] };
+// COMPLETE GAYATHRISM ARTWORK DATABASE (164 Items)
+const MASTER_DATABASE = { 
+    rawMaterials: [
+        { id: 'rm_1', name: 'Bangles Normal base 1 Box', unit: 'Pcs', qty: 1, cost: 120, stock: 1000 },
+        { id: 'rm_2', name: 'Bangles Flat base 1 Box', unit: 'Pcs', qty: 1, cost: 130, stock: 1000 },
+        { id: 'rm_3', name: 'Thread 1pc', unit: 'Reel', qty: 1, cost: 18, stock: 1000 },
+        { id: 'rm_4', name: 'Thread 1 box (10pcs)', unit: 'Pcs', qty: 10, cost: 160, stock: 1000 },
+        { id: 'rm_5', name: 'Fevicryl Glue Cone 1pc', unit: 'Pcs', qty: 1, cost: 15, stock: 1000 },
+        { id: 'rm_5b', name: 'Fevicryl Glue Tube 30g', unit: 'Pcs', qty: 1, cost: 20, stock: 1000 },
+        { id: 'rm_6', name: 'B7000 Glue 1pc 50ml', unit: 'Pcs', qty: 1, cost: 60, stock: 1000 },
+        { id: 'rm_7', name: 'Glue pen and stick', unit: 'Pcs', qty: 1, cost: 40, stock: 1000 },
+        { id: 'rm_8', name: 'Thread Cutter 1pc', unit: 'Pcs', qty: 1, cost: 20, stock: 1000 },
+        { id: 'rm_9', name: 'Nose plier Big 1 pc', unit: 'Pcs', qty: 1, cost: 80, stock: 1000 },
+        { id: 'rm_10', name: 'Wire cutter Big 1pc', unit: 'Pcs', qty: 1, cost: 80, stock: 1000 },
+        { id: 'rm_11', name: 'Punch hole big 1pc', unit: 'Pcs', qty: 1, cost: 150, stock: 1000 },
+        { id: 'rm_12', name: 'White and Gold kundans 10g', unit: 'Grm', qty: 10, cost: 15, stock: 1000 },
+        { id: 'rm_13', name: 'White and Gold kundans rare shapes 10g', unit: 'Grm', qty: 10, cost: 18, stock: 1000 },
+        { id: 'rm_14', name: 'Pearl white and Pearl Gold 10g', unit: 'Grm', qty: 10, cost: 18, stock: 1000 },
+        { id: 'rm_15', name: 'Kundans colors matt 10g', unit: 'Grm', qty: 10, cost: 25, stock: 1000 },
+        { id: 'rm_16', name: 'Kundans colors glossy 10g', unit: 'Grm', qty: 10, cost: 25, stock: 1000 },
+        { id: 'rm_17', name: 'Square kundans colors 1st quality 10g', unit: 'Grm', qty: 10, cost: 45, stock: 1000 },
+        { id: 'rm_18', name: 'Square kundans 2nd quality 10g', unit: 'Grm', qty: 10, cost: 25, stock: 1000 },
+        { id: 'rm_19', name: 'Moon shape matt 10g', unit: 'Grm', qty: 10, cost: 30, stock: 1000 },
+        { id: 'rm_20', name: 'Stone chain white and gold 1 mtr', unit: 'Mtr', qty: 1, cost: 20, stock: 1000 },
+        { id: 'rm_21', name: 'Stone chain colors 1mtr', unit: 'Mtr', qty: 1, cost: 30, stock: 1000 },
+        { id: 'rm_22', name: 'Ball chain 1mtr', unit: 'Mtr', qty: 1, cost: 9, stock: 1000 },
+        { id: 'rm_23', name: 'Coins 1st quality 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_24', name: 'Zardhosi 10g', unit: 'Grm', qty: 10, cost: 25, stock: 1000 },
+        { id: 'rm_25', name: 'Chakri gold 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_26', name: 'Jargon stones 10g', unit: 'Grm', qty: 10, cost: 35, stock: 1000 },
+        { id: 'rm_27', name: 'Center clip small', unit: 'Pcs', qty: 1, cost: 8, stock: 1000 },
+        { id: 'rm_28', name: 'Center clip Medium', unit: 'Pcs', qty: 1, cost: 10, stock: 1000 },
+        { id: 'rm_29', name: 'Center clip Big', unit: 'Pcs', qty: 1, cost: 10, stock: 1000 },
+        { id: 'rm_30', name: 'Tic tac clips Black 6 pairs', unit: 'Pcs', qty: 6, cost: 36, stock: 1000 },
+        { id: 'rm_31', name: 'Tic tac Golden 6 pairs', unit: 'Pcs', qty: 6, cost: 60, stock: 1000 },
+        { id: 'rm_32', name: 'Saree pin 1 dozen 12pcs', unit: 'Pcs', qty: 12, cost: 80, stock: 1000 },
+        { id: 'rm_33', name: 'Saree pin ½ dozen 6pcs', unit: 'Pcs', qty: 6, cost: 40, stock: 1000 },
+        { id: 'rm_34', name: 'Saree pin Metal 10pcs', unit: 'Pcs', qty: 10, cost: 40, stock: 1000 },
+        { id: 'rm_35', name: 'Hair pin 1 set (1st quality)', unit: 'Pcs', qty: 1, cost: 20, stock: 1000 },
+        { id: 'rm_36', name: 'Head band metal 3mm and 5mm 1 pc', unit: 'Pcs', qty: 1, cost: 20, stock: 1000 },
+        { id: 'rm_37', name: 'MDF round small 10pcs', unit: 'Pcs', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_38', name: 'MDF round medium 10pcs', unit: 'Pcs', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_39', name: 'MDF round Large 10pcs', unit: 'Pcs', qty: 10, cost: 25, stock: 1000 },
+        { id: 'rm_40', name: 'MDF round Extra-large 10pcs', unit: 'Pcs', qty: 10, cost: 35, stock: 1000 },
+        { id: 'rm_41', name: 'MDF Other shapes 10pcs', unit: 'Pcs', qty: 10, cost: 40, stock: 1000 },
+        { id: 'rm_42', name: 'Black rubber band 1pc', unit: 'Pcs', qty: 1, cost: 3, stock: 1000 },
+        { id: 'rm_43', name: 'Band Attacher 1pc', unit: 'Pcs', qty: 1, cost: 3, stock: 1000 },
+        { id: 'rm_44', name: 'Finger ring base 5 pcs', unit: 'Pcs', qty: 5, cost: 10, stock: 1000 },
+        { id: 'rm_45', name: 'finger Ring base Tarnish finish 1st quality 5 pc', unit: 'Pcs', qty: 5, cost: 50, stock: 1000 },
+        { id: 'rm_46', name: 'Jhumka base 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_47', name: 'Donut ring 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_48', name: 'Metal stud base 10g', unit: 'Grm', qty: 10, cost: 25, stock: 1000 },
+        { id: 'rm_49', name: 'Stud stopper 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_50', name: 'Ring stud base 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_51', name: 'Clutch clips 5 pcs small', unit: 'Pcs', qty: 5, cost: 25, stock: 1000 },
+        { id: 'rm_52', name: 'Clutch clips 5 pcs big', unit: 'Pcs', qty: 5, cost: 30, stock: 1000 },
+        { id: 'rm_53', name: 'Alligator clips small 1pc', unit: 'Pcs', qty: 1, cost: 3, stock: 1000 },
+        { id: 'rm_54', name: 'Alligator clip medium 1 pc', unit: 'Pcs', qty: 1, cost: 5, stock: 1000 },
+        { id: 'rm_55', name: 'Gier wire 1 roll pc', unit: 'Pcs', qty: 1, cost: 45, stock: 1000 },
+        { id: 'rm_56', name: 'Neck piece Dori 1pcs', unit: 'Pcs', qty: 1, cost: 15, stock: 1000 },
+        { id: 'rm_57', name: 'Gear lock beads 5g', unit: 'Grm', qty: 5, cost: 50, stock: 1000 },
+        { id: 'rm_58', name: 'Eye pin 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_59', name: 'Jump ring 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_60', name: 'S hook 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_61', name: 'Wax brown sheet 5pcs', unit: 'Pcs', qty: 5, cost: 10, stock: 1000 },
+        { id: 'rm_62', name: 'OHP sheet 1 pc', unit: 'Pcs', qty: 1, cost: 10, stock: 1000 },
+        { id: 'rm_63', name: 'Loreals 10g', unit: 'Grm', qty: 10, cost: 35, stock: 1000 },
+        { id: 'rm_64', name: 'Pearl chain 1 mtr', unit: 'Mtr', qty: 1, cost: 70, stock: 1000 },
+        { id: 'rm_65', name: 'U pin 5 pcs', unit: 'Pcs', qty: 5, cost: 10, stock: 1000 },
+        { id: 'rm_66', name: 'Bracelet 1 pc', unit: 'Pcs', qty: 1, cost: 15, stock: 1000 },
+        { id: 'rm_67', name: 'Crystal tec Elastic 1pc', unit: 'Pcs', qty: 1, cost: 25, stock: 1000 },
+        { id: 'rm_68', name: 'A1 zari thread 1pc', unit: 'Reel', qty: 1, cost: 18, stock: 1000 },
+        { id: 'rm_69', name: 'Gimp wire 10g', unit: 'Grm', qty: 10, cost: 30, stock: 1000 },
+        { id: 'rm_70', name: 'Felt sheet 1 pc A4 sheet size', unit: 'Pcs', qty: 1, cost: 35, stock: 1000 },
+        { id: 'rm_71', name: 'Leather sheet ½ A4 sheet size 1pc', unit: 'Pcs', qty: 1, cost: 25, stock: 1000 },
+        { id: 'rm_72', name: 'Sugar beads matt 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_73', name: 'Sugar beads glossy 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_74', name: 'Curdhana beads 10g', unit: 'Grm', qty: 10, cost: 15, stock: 1000 },
+        { id: 'rm_75', name: 'Salli tube 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_76', name: 'Salli tube long 10g', unit: 'Grm', qty: 10, cost: 15, stock: 1000 },
+        { id: 'rm_77', name: 'Side hole sequence 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_78', name: 'sequence 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_79', name: 'Sequence double shade 10g', unit: 'Grm', qty: 10, cost: 30, stock: 1000 },
+        { id: 'rm_80', name: 'Stocking cloth small 1pc', unit: 'Pcs', qty: 1, cost: 5, stock: 1000 },
+        { id: 'rm_81', name: 'Stocking cloth big 1pc', unit: 'Pcs', qty: 1, cost: 10, stock: 1000 },
+        { id: 'rm_82', name: 'Stocking wire 5pcs', unit: 'Pcs', qty: 5, cost: 10, stock: 1000 },
+        { id: 'rm_83', name: 'Shells 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_84', name: 'Shell’s gold outline 10g', unit: 'Grm', qty: 10, cost: 25, stock: 1000 },
+        { id: 'rm_85', name: 'Daisy flower 10g', unit: 'Grm', qty: 10, cost: 30, stock: 1000 },
+        { id: 'rm_86', name: 'Lotus petal beads 10g', unit: 'Grm', qty: 10, cost: 25, stock: 1000 },
+        { id: 'rm_87', name: 'Satin ribbon role 1 inch 1pc', unit: 'Pcs', qty: 1, cost: 100, stock: 1000 },
+        { id: 'rm_88', name: 'Satin ribbon role ½ inch 1pc', unit: 'Pcs', qty: 1, cost: 90, stock: 1000 },
+        { id: 'rm_89', name: 'Organza ribbon role 1inch 1pc', unit: 'Pcs', qty: 1, cost: 100, stock: 1000 },
+        { id: 'rm_90', name: 'Organza ribbon role ½ inch 1pc', unit: 'Pcs', qty: 1, cost: 90, stock: 1000 },
+        { id: 'rm_91', name: 'Pollens 1 punch', unit: 'Pcs', qty: 1, cost: 25, stock: 1000 },
+        { id: 'rm_92', name: 'Net cloth 1mtr', unit: 'Mtr', qty: 1, cost: 40, stock: 1000 },
+        { id: 'rm_93', name: 'Zardhosi needle 1 packet', unit: 'Pcs', qty: 1, cost: 50, stock: 1000 },
+        { id: 'rm_94', name: 'French knot needle 1 packet', unit: 'Pcs', qty: 1, cost: 45, stock: 1000 },
+        { id: 'rm_95', name: 'Flower antique cap 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_96', name: 'Crystal beads 1-line 4mm', unit: 'Pcs', qty: 1, cost: 20, stock: 1000 },
+        { id: 'rm_97', name: 'Aari wooden ring 10-inch 1pc', unit: 'Pcs', qty: 1, cost: 50, stock: 1000 },
+        { id: 'rm_98', name: 'Mini Iron Box 1 pc', unit: 'Pcs', qty: 1, cost: 700, stock: 1000 },
+        { id: 'rm_99', name: 'Cone Zari thread 1 pc', unit: 'Reel', qty: 1, cost: 100, stock: 1000 },
+        { id: 'rm_100', name: 'UV Resin 10g', unit: 'Grm', qty: 10, cost: 120, stock: 1000 },
+        { id: 'rm_101', name: 'UV Lamp 1pc', unit: 'Pcs', qty: 1, cost: 150, stock: 1000 },
+        { id: 'rm_102', name: 'Resin Tape', unit: 'Pcs', qty: 1, cost: 120, stock: 1000 },
+        { id: 'rm_103', name: 'Dry flower 1box', unit: 'Pcs', qty: 1, cost: 130, stock: 1000 },
+        { id: 'rm_104', name: 'Drilling holes machine', unit: 'Pcs', qty: 1, cost: 650, stock: 1000 },
+        { id: 'rm_105', name: 'Soldering Machine 1pc', unit: 'Pcs', qty: 1, cost: 180, stock: 1000 },
+        { id: 'rm_106', name: 'Gungroo Beads 10g', unit: 'Grm', qty: 10, cost: 30, stock: 1000 },
+        { id: 'rm_107', name: '3 hole connectors 1pc', unit: 'Pcs', qty: 1, cost: 3, stock: 1000 },
+        { id: 'rm_108', name: '5 hole connectors 1 pc', unit: 'Pcs', qty: 1, cost: 5, stock: 1000 },
+        { id: 'rm_109', name: 'Big center neck connector 1 pc', unit: 'Pcs', qty: 1, cost: 20, stock: 1000 },
+        { id: 'rm_110', name: 'Canvas sheet ½ mtr', unit: 'Mtr', qty: 0.5, cost: 80, stock: 1000 },
+        { id: 'rm_111', name: '200 GSM paper A4 sheet 1pc', unit: 'Pcs', qty: 1, cost: 10, stock: 1000 },
+        { id: 'rm_112', name: 'Cotton Thread 1 pc', unit: 'Reel', qty: 1, cost: 35, stock: 1000 },
+        { id: 'rm_113', name: 'Gotta Patti lace 5mtr', unit: 'Mtr', qty: 5, cost: 25, stock: 1000 },
+        { id: 'rm_114', name: 'White marking pencil 1 pc', unit: 'Pcs', qty: 1, cost: 10, stock: 1000 },
+        { id: 'rm_115', name: 'Nylon Thread 1pc', unit: 'Reel', qty: 1, cost: 15, stock: 1000 },
+        { id: 'rm_116', name: 'Cut out shapes 10g', unit: 'Grm', qty: 10, cost: 25, stock: 1000 },
+        { id: 'rm_117', name: 'Zardhosi Nakshi 10g', unit: 'Grm', qty: 10, cost: 30, stock: 1000 },
+        { id: 'rm_118', name: 'Antique pieces like ganesh 10g', unit: 'Grm', qty: 10, cost: 30, stock: 1000 },
+        { id: 'rm_119', name: 'Plastic Round beads 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_120', name: 'Mirror 10g', unit: 'Grm', qty: 10, cost: 20, stock: 1000 },
+        { id: 'rm_121', name: 'Bangle plastic box round small', unit: 'Pcs', qty: 1, cost: 5, stock: 1000 },
+        { id: 'rm_122', name: 'Bangle plastic box round big 1 box', unit: 'Pcs', qty: 1, cost: 10, stock: 1000 },
+        { id: 'rm_123', name: '5*8 size drop clip stones 1 pc', unit: 'Pcs', qty: 1, cost: 3, stock: 1000 },
+        { id: 'rm_124', name: '10*6 size drop clip stone 1pc', unit: 'Pcs', qty: 1, cost: 4, stock: 1000 },
+        { id: 'rm_125', name: '13*8 size drop clip stone 1pc', unit: 'Pcs', qty: 1, cost: 6, stock: 1000 },
+        { id: 'rm_126', name: '10*5 size eye clip stone 1pc', unit: 'Pcs', qty: 1, cost: 5, stock: 1000 },
+        { id: 'rm_127', name: '15*7 size eye clip stone 1pc', unit: 'Pcs', qty: 1, cost: 8, stock: 1000 },
+        { id: 'rm_128', name: '10*5 size tube clip stone 1pc', unit: 'Pcs', qty: 1, cost: 6, stock: 1000 },
+        { id: 'rm_129', name: 'Grey packing cover 6*8 size 5pcs', unit: 'Pcs', qty: 5, cost: 15, stock: 1000 },
+        { id: 'rm_130', name: 'Grey packing cover 8*10 size 5pcs', unit: 'Pcs', qty: 5, cost: 30, stock: 1000 },
+        { id: 'rm_131', name: 'Grey packing cover 10*14 size 5pcs', unit: 'Pcs', qty: 5, cost: 40, stock: 1000 },
+        { id: 'rm_132', name: '24 partition box 1 pc', unit: 'Pcs', qty: 1, cost: 200, stock: 1000 },
+        { id: 'rm_133', name: 'Clipstones 12ss white and gold 1 groos 5g', unit: 'Grm', qty: 5, cost: 35, stock: 1000 },
+        { id: 'rm_134', name: 'Clipstones 14ss white and gold 1 groos 5g', unit: 'Grm', qty: 5, cost: 35, stock: 1000 },
+        { id: 'rm_135', name: 'Clipstones 28ss White and gold 1 groos 5g', unit: 'Grm', qty: 5, cost: 35, stock: 1000 },
+        { id: 'rm_136', name: 'Clipstones colors 1 groos 5g', unit: 'Grm', qty: 5, cost: 45, stock: 1000 },
+        { id: 'rm_137', name: 'Clipstones oval shape dollar 1 pc', unit: 'Pcs', qty: 1, cost: 25, stock: 1000 },
+        { id: 'rm_138', name: 'Clipstone 10*14 size Rectangle1pc', unit: 'Pcs', qty: 1, cost: 9, stock: 1000 },
+        { id: 'rm_139', name: 'Clipstone 10*8 Rectangle size 1 pc', unit: 'Pcs', qty: 1, cost: 6, stock: 1000 },
+        { id: 'rm_140', name: 'Clipstone 10*14 size Oval 1pc', unit: 'Pcs', qty: 1, cost: 9, stock: 1000 },
+        { id: 'rm_141', name: 'Clipstone 10*8 Oval size 1 pc', unit: 'Pcs', qty: 1, cost: 6, stock: 1000 },
+        { id: 'rm_142', name: 'Jasmine bud Premium Quality 1 box 100 pcs', unit: 'Pcs', qty: 100, cost: 600, stock: 1000 },
+        { id: 'rm_143', name: 'Scrunchies Elastic 5 mtr', unit: 'Mtr', qty: 5, cost: 100, stock: 1000 },
+        { id: 'rm_144', name: 'Plain Satin cloth 1 mtr', unit: 'Mtr', qty: 1, cost: 150, stock: 1000 },
+        { id: 'rm_145', name: 'Printed Satin 1 mtr', unit: 'Mtr', qty: 1, cost: 230, stock: 1000 },
+        { id: 'rm_146', name: 'Printed cotton Fabric 1 mtr', unit: 'Mtr', qty: 1, cost: 250, stock: 1000 },
+        { id: 'rm_147', name: 'Designer lace 1 mtr', unit: 'Mtr', qty: 1, cost: 20, stock: 1000 },
+        { id: 'rm_148', name: 'MDF Donut Very small 10pcs', unit: 'Pcs', qty: 10, cost: 30, stock: 1000 },
+        { id: 'rm_149', name: 'MDF Donut Medium 10pcs', unit: 'Pcs', qty: 10, cost: 40, stock: 1000 },
+        { id: 'rm_150', name: 'MDF Donut Big 10pcs', unit: 'Pcs', qty: 10, cost: 55, stock: 1000 },
+        { id: 'rm_151', name: 'MDF Donut Large 10pcs', unit: 'Pcs', qty: 10, cost: 65, stock: 1000 },
+        { id: 'rm_152', name: 'Silk thread jewelry kit no 1', unit: 'Pcs', qty: 1, cost: 500, stock: 1000 },
+        { id: 'rm_153', name: 'Silk thread jewelry kit no 2', unit: 'Pcs', qty: 1, cost: 1000, stock: 1000 },
+        { id: 'rm_154', name: 'Silk thread jewelry kit no 3', unit: 'Pcs', qty: 1, cost: 1500, stock: 1000 },
+        { id: 'rm_155', name: 'Silk thread jewelry kit no 4', unit: 'Pcs', qty: 1, cost: 2000, stock: 1000 },
+        { id: 'rm_156', name: 'Silk thread jewelry kit no 5', unit: 'Pcs', qty: 1, cost: 1000, stock: 1000 },
+        { id: 'rm_157', name: 'Brooches kit', unit: 'Pcs', qty: 1, cost: 1200, stock: 1000 },
+        { id: 'rm_158', name: 'Fabric Jewelry kit', unit: 'Pcs', qty: 1, cost: 1400, stock: 1000 },
+        { id: 'rm_159', name: 'Cotton Thread Jewelry kit', unit: 'Pcs', qty: 1, cost: 1000, stock: 1000 },
+        { id: 'rm_160', name: 'Resin Jewelry kit', unit: 'Pcs', qty: 1, cost: 1200, stock: 1000 },
+        { id: 'rm_161', name: 'Invisible Jewelry kit', unit: 'Pcs', qty: 1, cost: 500, stock: 1000 },
+        { id: 'rm_162', name: 'Jothika set Jewelry kit', unit: 'Pcs', qty: 1, cost: 500, stock: 1000 },
+        { id: 'rm_163', name: 'Silk Thread Business Kit 1', unit: 'Pcs', qty: 1, cost: 10000, stock: 1000 },
+        { id: 'rm_164', name: 'Silk Thread Business Kit 2', unit: 'Pcs', qty: 1, cost: 6000, stock: 1000 }
+    ],
+    labor: [],
+    packing: []
+};
+
+// Start the inventory by checking local storage first
+let inventory = JSON.parse(localStorage.getItem('valaya_inv_v3')) || MASTER_DATABASE;
 let savedBills = JSON.parse(localStorage.getItem('valaya_saved_v3')) || [];
-let currentBill = JSON.parse(localStorage.getItem('valaya_bill_v3')) || {
-    id: '', customer: '', phone: '', product: '', orderQty: 1, address: '', date: '', notes: '', items: [], courier: 0, discount: 0
+let currentBill = JSON.parse(localStorage.getItem('valaya_bill_v3')) || { 
+    id: '', customer: '', phone: '', address: '', date: '', notes: '', 
+    productList: [], items: [], courier: 0, discount: 0 
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -22,8 +197,6 @@ function initWorkspaceMeta() {
     }
     document.getElementById('customer-name').value = currentBill.customer || '';
     document.getElementById('customer-phone').value = currentBill.phone || '';
-    document.getElementById('product-name').value = currentBill.product || '';
-    document.getElementById('product-order-qty').value = currentBill.orderQty || 1;
     document.getElementById('customer-address').value = currentBill.address || '';
     document.getElementById('order-notes').value = currentBill.notes || '';
     document.getElementById('courier-input').value = currentBill.courier || '';
@@ -36,7 +209,7 @@ function initWorkspaceMeta() {
 }
 
 function setupCoreActionListeners() {
-    // Inventory Injections
+    // Inventory
     document.getElementById('form-raw-material').addEventListener('submit', (e) => {
         e.preventDefault();
         inventory.rawMaterials.push({
@@ -74,39 +247,34 @@ function setupCoreActionListeners() {
     document.getElementById('item-type-select').addEventListener('change', populateItemDropdown);
     document.getElementById('btn-add-item').addEventListener('click', injectItemInternalList);
 
-    // DYNAMIC INTERACTIVE AUTOMATED CALCULATIONS ENGINE HOOKS
+    // Workspace Input Logic
     document.getElementById('customer-name').addEventListener('input', (e) => { currentBill.customer = e.target.value; updateLiveDocumentTextLabels(); });
     document.getElementById('customer-phone').addEventListener('input', (e) => { currentBill.phone = e.target.value; updateLiveDocumentTextLabels(); });
-    document.getElementById('product-name').addEventListener('input', (e) => { currentBill.product = e.target.value; updateLiveDocumentTextLabels(); });
-    
-    // Multi-Set Scaling Trigger
-    document.getElementById('product-order-qty').addEventListener('input', (e) => { 
-        currentBill.orderQty = parseInt(e.target.value) || 1; 
-        calculateWorkspaceTotals(); 
-    });
-    
     document.getElementById('customer-address').addEventListener('input', (e) => { currentBill.address = e.target.value; updateLiveDocumentTextLabels(); });
     document.getElementById('order-notes').addEventListener('input', (e) => { currentBill.notes = e.target.value; updateLiveDocumentTextLabels(); });
-
+    
+    document.getElementById('product-order-qty').addEventListener('input', calculateWorkspaceTotals);
     document.getElementById('courier-input').addEventListener('input', calculateWorkspaceTotals);
     document.getElementById('discount-input').addEventListener('input', calculateWorkspaceTotals);
 
     setupLiveToggleLogic('expense-percentage-select', 'custom-expense-input');
     setupLiveToggleLogic('profit-percentage-select', 'custom-profit-input');
 
-    // Structural Actions
+    // Multi-Item Bill Logic
+    document.getElementById('btn-add-product-to-list').addEventListener('click', pushProductToInvoiceList);
+
+    // Business Logic
     document.getElementById('btn-save-bill').addEventListener('click', commitBillToDatabaseMemory);
     document.getElementById('btn-new-bill').addEventListener('click', resetWorkspaceEngineData);
     document.getElementById('btn-print-bill').addEventListener('click', () => window.print());
     document.getElementById('btn-whatsapp-bill').addEventListener('click', buildCustomBrandedWhatsAppMessage);
     document.getElementById('search-saved-bills').addEventListener('input', renderSavedBillsTable);
 
-    // BACKUP IMPORT & EXPORT LOGICAL TRIGGERS
     document.getElementById('btn-export-json').addEventListener('click', executeSystemJSONBackupExport);
     document.getElementById('btn-import-json').addEventListener('change', executeSystemJSONBackupImport);
     document.getElementById('btn-export-csv').addEventListener('click', exportLedgerToCSVFile);
-
-    // Testing suite
+    
+    // ORANGE BUTTON - Injection Logic
     document.getElementById('btn-auto-test').addEventListener('click', runFastAutomatedMockSuite);
 }
 
@@ -120,18 +288,67 @@ function setupLiveToggleLogic(sId, iId) {
     inp.addEventListener('input', calculateWorkspaceTotals);
 }
 
+function pushProductToInvoiceList() {
+    const name = document.getElementById('product-name').value;
+    const qty = parseInt(document.getElementById('product-order-qty').value) || 1;
+    const priceText = document.getElementById('live-grand-total').textContent; 
+    const price = parseFloat(priceText.replace('₹', '')) || 0;
+
+    if (!name || name.trim() === "") { 
+        alert("Please enter a Product Name."); 
+        return; 
+    }
+
+    if (!currentBill.productList) currentBill.productList = [];
+    currentBill.productList.push({ name, qty, price, netProfit: currentBill.calculatedNetProfit || 0 });
+
+    // Wipe middle workspace for next item
+    document.getElementById('product-name').value = '';
+    document.getElementById('product-order-qty').value = '1';
+    currentBill.items = []; 
+    
+    renderInvoiceItems(); 
+    updateLiveDocumentTextLabels();
+    alert("Product added to bill preview!");
+}
+
 function updateLiveDocumentTextLabels() {
     localStorage.setItem('valaya_bill_v3', JSON.stringify(currentBill));
     const nameNode = document.getElementById('lbl-customer-name');
-    if(currentBill.customer) {
-        nameNode.textContent = currentBill.customer; nameNode.classList.remove('empty-placeholder');
-    } else {
-        nameNode.textContent = "No Customer Selected"; nameNode.classList.add('empty-placeholder');
-    }
+    nameNode.textContent = currentBill.customer || "No Customer Selected";
     document.getElementById('lbl-customer-phone').textContent = currentBill.phone ? `Phone: ${currentBill.phone}` : '';
-    document.getElementById('lbl-customer-address').textContent = currentBill.address ? `Shipping Destination: ${currentBill.address}` : '';
-    document.getElementById('lbl-product-title').textContent = currentBill.product ? `${currentBill.product} (x${currentBill.orderQty || 1} Sets)` : "No Product Configured";
-    document.getElementById('lbl-product-notes').textContent = currentBill.notes ? `Customization Note: ${currentBill.notes}` : '';
+    document.getElementById('lbl-customer-address').textContent = currentBill.address ? `Shipping: ${currentBill.address}` : '';
+
+    const billBody = document.getElementById('bill-items-body');
+    billBody.innerHTML = '';
+    let totalBasePrice = 0;
+
+    if (currentBill.productList && currentBill.productList.length > 0) {
+        currentBill.productList.forEach((prod, index) => {
+            totalBasePrice += prod.price;
+            billBody.innerHTML += `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px 5px;">
+                        <div style="font-weight: bold;">${prod.name} (x${prod.qty})</div>
+                        <button onclick="removeProductFromList(${index})" style="color: red; background: none; border: none; cursor: pointer; font-size: 0.7rem; padding: 0;">[Remove]</button>
+                    </td>
+                    <td style="text-align: right; font-weight: bold;">₹${prod.price.toFixed(2)}</td>
+                </tr>`;
+        });
+    } else {
+        billBody.innerHTML = '<tr><td colspan="2" style="color: #999; font-style: italic; padding: 20px; text-align: center;">No items added to bill yet</td></tr>';
+    }
+
+    document.getElementById('lbl-summary-base').textContent = `₹${totalBasePrice.toFixed(2)}`;
+    currentBill.courier = parseFloat(document.getElementById('courier-input').value) || 0;
+    currentBill.discount = parseFloat(document.getElementById('discount-input').value) || 0;
+    const finalGrand = (totalBasePrice + currentBill.courier) - currentBill.discount;
+    document.getElementById('lbl-summary-grand').textContent = `₹${Math.max(0, finalGrand).toFixed(2)}`;
+}
+
+function removeProductFromList(index) {
+    currentBill.productList.splice(index, 1);
+    updateLiveDocumentTextLabels();
 }
 
 function populateItemDropdown() {
@@ -140,11 +357,11 @@ function populateItemDropdown() {
     let targetArr = type === 'raw-material' ? inventory.rawMaterials : (type === 'labor' ? inventory.labor : inventory.packing);
     
     if(targetArr.length === 0) {
-        select.innerHTML = '<option disabled selected>No data entries added yet</option>'; return;
+        select.innerHTML = '<option disabled selected>No data added yet</option>'; return;
     }
     targetArr.forEach(item => {
         let opt = document.createElement('option'); opt.value = item.id;
-        opt.textContent = type === 'raw-material' ? `${item.name} (Available Stock: ${item.stock} ${item.unit})` :
+        opt.textContent = type === 'raw-material' ? `${item.name} (Stock: ${item.stock} ${item.unit})` :
                           (type === 'labor' ? `${item.name} (₹${item.rate}/Hr)` : `${item.name} (₹${item.price})`);
         select.appendChild(opt);
     });
@@ -155,7 +372,7 @@ function injectItemInternalList() {
     const id = document.getElementById('item-select').value;
     const qty = parseFloat(document.getElementById('item-quantity').value);
 
-    if(!id || isNaN(qty) || qty <= 0) { alert('Assign valid item entries and quantity metrics.'); return; }
+    if(!id || isNaN(qty) || qty <= 0) { alert('Assign valid metrics.'); return; }
 
     let itemData, desc, unitPrice, itemId;
     if (type === 'raw-material') {
@@ -169,34 +386,31 @@ function injectItemInternalList() {
         desc = `Packing: ${itemData.name}`; unitPrice = itemData.price; itemId = itemData.id;
     }
 
-    currentBill.items.push({ 
-        id: 'item_' + Date.now(), itemId, type, description: desc, quantityPerSet: qty, unitPrice 
-    });
+    currentBill.items.push({ id: 'item_' + Date.now(), itemId, type, description: desc, quantityPerSet: qty, unitPrice });
     document.getElementById('item-quantity').value = '';
     renderInvoiceItems();
 }
 
 function renderInvoiceItems() {
     const tbody = document.querySelector('#invoice-items-table tbody'); tbody.innerHTML = '';
-    const multiplier = currentBill.orderQty || 1;
+    const multiplier = parseInt(document.getElementById('product-order-qty').value) || 1;
 
     currentBill.items.forEach((item, index) => {
         let tr = document.createElement('tr');
-        const scaledTotalQty = item.quantityPerSet * multiplier;
-        const totalCost = scaledTotalQty * item.unitPrice;
+        const scaledQty = item.quantityPerSet * multiplier;
+        const totalCost = scaledQty * item.unitPrice;
         
-        // Stock Shortage Verification Engine Logic
         let alertPill = '';
         if(item.type === 'raw-material') {
             const originalInvItem = inventory.rawMaterials.find(x => x.id === item.itemId);
-            if(originalInvItem && originalInvItem.stock < scaledTotalQty) {
-                alertPill = `<br><span class="stock-warning-pill">⚠️ Stock Deficit! Missing ${(scaledTotalQty - originalInvItem.stock).toFixed(1)} ${originalInvItem.unit}</span>`;
+            if(originalInvItem && originalInvItem.stock < scaledQty) {
+                alertPill = `<br><span class="stock-warning-pill">⚠️ Low Stock!</span>`;
             }
         }
 
         tr.innerHTML = `<td><strong>${item.type[0].toUpperCase()}</strong></td>
         <td>${item.description}${alertPill}</td>
-        <td>${item.quantityPerSet} <span style="color:#6B7280; font-size:0.75rem;">(Total Run: ${scaledTotalQty.toFixed(1)})</span></td>
+        <td>${item.quantityPerSet} sets (Tot: ${scaledQty.toFixed(1)})</td>
         <td>₹${totalCost.toFixed(2)}</td>
         <td><button class="delete-btn" onclick="removeItemFromInvoice(${index})">&times;</button></td>`;
         tbody.appendChild(tr);
@@ -206,31 +420,27 @@ function renderInvoiceItems() {
 
 function removeItemFromInvoice(i) { currentBill.items.splice(i, 1); renderInvoiceItems(); }
 
-// --- AUTOMATED PRODUCTION MATH LOGICS ENGINE WITH DETAILED SUB-TOTALS ---
 function calculateWorkspaceTotals() {
-    currentBill.courier = parseFloat(document.getElementById('courier-input').value) || 0;
-    currentBill.discount = parseFloat(document.getElementById('discount-input').value) || 0;
-    const multiplier = currentBill.orderQty || 1;
-
+    const multiplier = parseInt(document.getElementById('product-order-qty').value) || 1;
     let subRaw = 0, subLabor = 0, subPacking = 0;
 
     currentBill.items.forEach(item => {
         const scaledCost = (item.quantityPerSet * multiplier) * item.unitPrice;
         if (item.type === 'raw-material') subRaw += scaledCost;
-        else if (item.type === 'labor') subLabor += scaledCost;
+        else if (item.type === 'labor') subLabor += scaledCost; // Fixed typo: changed cost to scaledCost
         else subPacking += scaledCost;
     });
 
-    // Output detailed subsection totals back to user configuration dashboard interface panel
     document.getElementById('live-sub-raw').textContent = `₹${subRaw.toFixed(2)}`;
     document.getElementById('live-sub-labor').textContent = `₹${subLabor.toFixed(2)}`;
     document.getElementById('live-sub-packing').textContent = `₹${subPacking.toFixed(2)}`;
 
     const operationalCombinedSubtotal = subRaw + subLabor + subPacking;
+    document.getElementById('live-production-subtotal').textContent = `₹${operationalCombinedSubtotal.toFixed(2)}`;
     
     const expSelect = document.getElementById('expense-percentage-select');
     let expPct = expSelect.value === 'custom' ? (parseFloat(document.getElementById('custom-expense-input').value)||0)/100 : parseFloat(expSelect.value);
-    const calculatedExpenseAmount = subRaw * expPct; // Expense logic linked as % of Raw Materials
+    const calculatedExpenseAmount = subRaw * expPct; 
     
     const absoluteMakingCost = operationalCombinedSubtotal + calculatedExpenseAmount;
     
@@ -239,208 +449,104 @@ function calculateWorkspaceTotals() {
     const calculatedProfitAmount = absoluteMakingCost * profPct;
 
     const netRetailBasePrice = absoluteMakingCost + calculatedProfitAmount;
-    const absoluteGrandTotalDue = Math.max(0, (netRetailBasePrice + currentBill.courier) - currentBill.discount);
-
-    // Save internal profit calculations for analytics indexing later
     currentBill.calculatedNetProfit = calculatedProfitAmount;
 
-    // Render configuration metrics
     document.getElementById('live-expense-val').textContent = `₹${calculatedExpenseAmount.toFixed(2)}`;
     document.getElementById('live-profit-val').textContent = `₹${calculatedProfitAmount.toFixed(2)}`;
-    document.getElementById('live-grand-total').textContent = `₹${absoluteGrandTotalDue.toFixed(2)}`;
-
-    // Render customer preview metrics
-    document.getElementById('lbl-product-base-price').textContent = `₹${netRetailBasePrice.toFixed(2)}`;
-    document.getElementById('lbl-summary-base').textContent = `₹${netRetailBasePrice.toFixed(2)}`;
-    document.getElementById('lbl-summary-courier').textContent = `₹${currentBill.courier.toFixed(2)}`;
-    document.getElementById('lbl-summary-discount').textContent = `-₹${currentBill.discount.toFixed(2)}`;
-    document.getElementById('lbl-summary-grand').textContent = `₹${absoluteGrandTotalDue.toFixed(2)}`;
-
-    document.getElementById('row-lbl-courier').style.display = currentBill.courier > 0 ? 'flex' : 'none';
-    document.getElementById('row-lbl-discount').style.display = currentBill.discount > 0 ? 'flex' : 'none';
+    document.getElementById('live-grand-total').textContent = `₹${netRetailBasePrice.toFixed(2)}`;
 
     updateLiveDocumentTextLabels();
 }
 
-// --- CORE DISASTER RECOVERY & CONFIG FILE IMPORTS/EXPORTS ---
 function executeSystemJSONBackupExport() {
-    const packageData = {
-        version: '3.0.0',
-        timestamp: Date.now(),
-        inventory: inventory,
-        savedBills: savedBills
-    };
+    const packageData = { inventory, savedBills };
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(packageData));
     const dlAnchor = document.createElement('a');
     dlAnchor.setAttribute("href", dataStr);
-    dlAnchor.setAttribute("download", `VALAYA_STORES_BACKUP_${new Date().toISOString().split('T')[0]}.json`);
-    document.body.appendChild(dlAnchor);
+    dlAnchor.setAttribute("download", `BACKUP_${Date.now()}.json`);
     dlAnchor.click();
-    dlAnchor.remove();
 }
 
 function executeSystemJSONBackupImport(e) {
     const fileReader = new FileReader();
-    if(!e.target.files[0]) return;
-    
     fileReader.onload = function(event) {
-        try {
-            const parsed = JSON.parse(event.target.result);
-            if(parsed.inventory && parsed.savedBills) {
-                inventory = parsed.inventory;
-                savedBills = parsed.savedBills;
-                localStorage.setItem('valaya_inv_v3', JSON.stringify(inventory));
-                localStorage.setItem('valaya_saved_v3', JSON.stringify(savedBills));
-                
-                renderInventoryTables();
-                populateItemDropdown();
-                renderSavedBillsTable();
-                rebuildAnalyticsDashboard();
-                calculateWorkspaceTotals();
-                alert('Database Restored Successfully! All materials and historical invoices are recovered.');
-            } else {
-                alert('Invalid file format. Ensure you upload a valid Valaya Stores Backup JSON file.');
-            }
-        } catch (err) {
-            alert('Error parsing backup file data structure template.');
-        }
+        const parsed = JSON.parse(event.target.result);
+        inventory = parsed.inventory; savedBills = parsed.savedBills;
+        localStorage.setItem('valaya_inv_v3', JSON.stringify(inventory));
+        localStorage.setItem('valaya_saved_v3', JSON.stringify(savedBills));
+        location.reload();
     };
     fileReader.readAsText(e.target.files[0]);
 }
 
 function exportLedgerToCSVFile() {
-    if(savedBills.length === 0) return alert('No historical database records available to convert.');
-    let csvContent = "data:text/csv;charset=utf-8,Invoice ID,Date,Customer Name,Phone Number,Product Model,Quantity,Grand Total Paid,Net Profit Earned\n";
-    
+    let csvContent = "data:text/csv;charset=utf-8,ID,Date,Customer,Total,Profit\n";
     savedBills.forEach(b => {
-        let row = `"${b.id}","${b.date}","${b.customer}","${b.phone}","${b.product}","${b.orderQty}","${b.savedGrand || 0}","₹${(b.calculatedNetProfit || 0).toFixed(2)}"\n`;
-        csvContent += row;
+        csvContent += `${b.id},${b.date},${b.customer},${b.savedGrand},${b.totalProfitEarned || 0}\n`;
     });
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `VALAYA_STORES_LEDGER_${new Date().getFullYear()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    window.open(encodeURI(csvContent));
 }
 
-// --- ANALYTICS PROCESSING SYSTEM ---
 function rebuildAnalyticsDashboard() {
-    let globalRevenue = 0; let globalProfit = 0; let catalogFrequency = {};
-    
+    let rev = 0, prof = 0;
     savedBills.forEach(b => {
-        let numTotal = parseFloat(String(b.savedGrand).replace(/[^0-9.]/g, '')) || 0;
-        globalRevenue += numTotal;
-        globalProfit += b.calculatedNetProfit || 0;
-        
-        if(b.product) {
-            catalogFrequency[b.product] = (catalogFrequency[b.product] || 0) + parseInt(b.orderQty || 1);
-        }
+        rev += parseFloat(b.savedGrand.replace('₹', '')) || 0;
+        prof += b.totalProfitEarned || 0;
     });
-
-    document.getElementById('stat-revenue').textContent = `₹${globalRevenue.toFixed(2)}`;
-    document.getElementById('stat-profit').textContent = `₹${globalProfit.toFixed(2)}`;
-    
-    let topDesign = "None Tracked"; let maxCount = 0;
-    for(let design in catalogFrequency) {
-        if(catalogFrequency[design] > maxCount) { maxCount = catalogFrequency[design]; topDesign = `${design} (${maxCount} sets)`; }
-    }
-    document.getElementById('stat-popular').textContent = topDesign;
+    document.getElementById('stat-revenue').textContent = `₹${rev.toFixed(2)}`;
+    document.getElementById('stat-profit').textContent = `₹${prof.toFixed(2)}`;
 }
 
-// --- CUSTOM STORE WHATSAPP MESSAGE ROUTINES ---
 function buildCustomBrandedWhatsAppMessage() {
-    if(!currentBill.customer.trim() || !currentBill.product.trim()) {
-        alert('Configure customer profiles and order variables before launching WhatsApp integrations.'); return;
-    }
-    const grandTotalStr = document.getElementById('lbl-summary-grand').textContent;
-
-    let txt = `✨ *VALAYA STORE — ORDER INVOICE* ✨\n`;
-    txt += `Invoice Reference ID: ${currentBill.id}\n`;
-    txt += `Date of Dispatch: ${currentBill.date}\n`;
-    txt += `Billed To: *${currentBill.customer}*\n\n`;
-    
-    txt += `🛍️ *Order Blueprint Selection:*\n`;
-    txt += `• Design Line: *${currentBill.product}*\n`;
-    txt += `• Complete Quantity: ${currentBill.orderQty} Finished Bangle Set(s)\n`;
-    txt += `-------------------------------------------\n`;
-    txt += `💰 *TOTAL PAYABLE DUE: ${grandTotalStr}*\n`;
-    txt += `-------------------------------------------\n\n`;
-    
-    if(currentBill.address) txt += `📍 *Delivery Address:* ${currentBill.address}\n\n`;
-    if(currentBill.notes) txt += `📝 *Customization Details:* ${currentBill.notes}\n\n`;
-    
-    txt += `Thank you so much for choosing Valaya Store to craft your personalized luxury bangles! We appreciate your support for handcrafted design. 🥰💖\n\n`;
-    txt += `📸 *Follow us on Instagram for lookbooks & updates:* \n`;
-    txt += `https://www.instagram.com/valaya_store`;
-
-    const encoded = encodeURIComponent(txt);
-    const cleanPhone = currentBill.phone.replace(/[^0-9]/g, '');
-    const finalUrl = cleanPhone ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encoded}` : `https://api.whatsapp.com/send?text=${encoded}`;
-    window.open(finalUrl, '_blank');
+    let txt = `*VALAYA STORE INVOICE*\nCustomer: ${currentBill.customer}\nTotal Payable: ${document.getElementById('lbl-summary-grand').textContent}\nItems:\n`;
+    currentBill.productList.forEach(p => txt += `• ${p.name} (x${p.qty})\n`);
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`, '_blank');
 }
 
-// --- INVENTORY LOGISTICS DATABASES SYNC ENGINE ---
 function renderInventoryTables() {
-    const buildTable = (id, data, key) => {
+    const build = (id, data, key) => {
         const tbl = document.getElementById(id);
-        tbl.innerHTML = '<thead><tr><th>Asset Name</th><th>Base Cost Rate</th><th></th></tr></thead>';
+        tbl.innerHTML = '<thead><tr><th>Name</th><th>Rate</th><th></th></tr></thead>';
         const tbody = document.createElement('tbody');
         data.forEach((item, idx) => {
             let tr = document.createElement('tr');
-            let costDisplay = key === 'rawMaterials' ? `₹${item.cost} / ${item.qty}${item.unit} <br><small style="color:#2563EB;">Stock: ${item.stock} ${item.unit}</small>` : 
-                             (key === 'labor' ? `₹${item.rate}/Hr` : `₹${item.price}/Unit`);
-            tr.innerHTML = `<td>${item.name}</td><td>${costDisplay}</td><td><button class="delete-btn" onclick="deleteInvItem('${key}', ${idx})">&times;</button></td>`;
+            let cost = key === 'rawMaterials' ? `₹${item.cost}/${item.qty}${item.unit}` : (key === 'labor' ? `₹${item.rate}/Hr` : `₹${item.price}`);
+            tr.innerHTML = `<td>${item.name}</td><td>${cost}</td><td><button class="delete-btn" onclick="deleteInvItem('${key}', ${idx})">&times;</button></td>`;
             tbody.appendChild(tr);
         });
         tbl.appendChild(tbody);
     };
-    buildTable('table-raw-materials', inventory.rawMaterials, 'rawMaterials');
-    buildTable('table-labor', inventory.labor, 'labor');
-    buildTable('table-packing', inventory.packing, 'packing');
+    build('table-raw-materials', inventory.rawMaterials, 'rawMaterials');
+    build('table-labor', inventory.labor, 'labor');
+    build('table-packing', inventory.packing, 'packing');
 }
 
 function deleteInvItem(key, idx) { inventory[key].splice(idx, 1); saveAndSyncInventory(); }
 function saveAndSyncInventory() { 
     localStorage.setItem('valaya_inv_v3', JSON.stringify(inventory)); 
-    renderInventoryTables(); populateItemDropdown(); renderInvoiceItems(); 
+    renderInventoryTables(); populateItemDropdown();
 }
 
 function renderSavedBillsTable() {
-    const filter = document.getElementById('search-saved-bills').value.toLowerCase();
     const tbody = document.querySelector('#table-saved-bills tbody'); tbody.innerHTML = '';
     savedBills.forEach(b => {
-        if(b.id.toLowerCase().includes(filter) || b.customer.toLowerCase().includes(filter)) {
-            let tr = document.createElement('tr');
-            tr.innerHTML = `<td>${b.id}</td><td>${b.customer}</td><td>${b.savedGrand || '₹0.00'}</td>
-            <td><button class="view-btn" onclick="loadSavedBillArchive('${b.id}')">View</button></td>`;
-            tbody.appendChild(tr);
-        }
+        let tr = document.createElement('tr');
+        tr.innerHTML = `<td>${b.id}</td><td>${b.customer}</td><td>${b.savedGrand}</td><td><button class="view-btn" onclick="loadSavedBillArchive('${b.id}')">View</button></td>`;
+        tbody.appendChild(tr);
     });
 }
 
 function commitBillToDatabaseMemory() {
-    if(!currentBill.customer.trim()) return alert('Assign valid customer profiles before caching states.');
-    
-    // Deduct stock levels permanently when saving invoice to records ledger
-    const multiplier = currentBill.orderQty || 1;
-    currentBill.items.forEach(item => {
-        if(item.type === 'raw-material') {
-            const rawInv = inventory.rawMaterials.find(x => x.id === item.itemId);
-            if(rawInv) rawInv.stock = Math.max(0, rawInv.stock - (item.quantityPerSet * multiplier));
-        }
-    });
-    saveAndSyncInventory();
-
+    if(!currentBill.customer) return alert('Enter a customer name.');
     currentBill.savedGrand = document.getElementById('lbl-summary-grand').textContent;
-    let idx = savedBills.findIndex(x => x.id === currentBill.id);
-    if(idx > -1) savedBills[idx] = { ...currentBill }; else savedBills.push({ ...currentBill });
-    
+    let totalP = 0;
+    currentBill.productList.forEach(p => totalP += p.netProfit);
+    currentBill.totalProfitEarned = totalP;
+
+    savedBills.push({ ...currentBill });
     localStorage.setItem('valaya_saved_v3', JSON.stringify(savedBills));
     renderSavedBillsTable(); rebuildAnalyticsDashboard();
-    alert('Invoice saved to business tracking ledger. Material warehouse stock updated!');
+    alert('Bill saved successfully!');
 }
 
 function loadSavedBillArchive(id) {
@@ -449,58 +555,36 @@ function loadSavedBillArchive(id) {
 }
 
 function resetWorkspaceEngineData() {
-    currentBill = { id: '', customer: '', phone: '', product: '', orderQty: 1, address: '', date: '', notes: '', items: [], courier: 0, discount: 0 };
+    currentBill = { id: '', customer: '', phone: '', address: '', date: '', notes: '', productList: [], items: [], courier: 0, discount: 0 };
     localStorage.removeItem('valaya_bill_v3'); initWorkspaceMeta(); renderInvoiceItems();
 }
 
-// --- HIGH STRESS TESTING SUITE ACCELERATOR ---
+// THE "ORANGE BUTTON" FORCE-INJECTION LOGIC
 function runFastAutomatedMockSuite() {
-    inventory.rawMaterials = [
-        { id: 'm1', name: 'Zari Designer Silk Thread', unit: 'Reel', qty: 10, cost: 500, stock: 45 }, 
-        { id: 'm2', name: 'Golden Metal Base Kadas', unit: 'Pcs', qty: 12, cost: 240, stock: 10 }, 
-        { id: 'm3', name: 'Kundan Cut Glass Stones', unit: 'Grm', qty: 50, cost: 350, stock: 500 }
-    ];
+    // 1. Force OVERWRITE the existing list with the MASTER list (164 items)
+    inventory = JSON.parse(JSON.stringify(MASTER_DATABASE));
+    
+    // 2. Add some Demo Labor & Packing
     inventory.labor = [
-        { id: 'l1', name: 'Tanuja (Master Designer)', rate: 150 },
-        { id: 'l2', name: 'Ananya (Assistant)', rate: 70 }
+        { id: 'l1', name: 'Tanuja (Master)', rate: 150 },
+        { id: 'l2', name: 'Ananya', rate: 70 }
     ];
-    inventory.packing = [
-        { id: 'p1', name: 'Velvet Premium Box', unit: 'Box', price: 65 },
-        { id: 'p2', name: 'Bubble Protectors', unit: 'Pcs', price: 10 }
-    ];
+    inventory.packing = [{ id: 'p1', name: 'Velvet Box', unit: 'Box', price: 65 }];
+
+    // 3. Save to browser and Refresh the screen
     saveAndSyncInventory();
 
-    // Mock ledger data for dashboard analytics compilation preview
-    savedBills = [
-        { id: 'VAL-10928', customer: 'Deepika Padukone', phone: '9188822211', product: 'Royal Kundan Chura Set', orderQty: 2, savedGrand: '₹4,500.00', calculatedNetProfit: 950.00, items: [], date: '10/5/2026' },
-        { id: 'VAL-10929', customer: 'Priyanka Chopra', phone: '9177755533', product: 'Bridal Silk Kada Set', orderQty: 5, savedGrand: '₹12,400.00', calculatedNetProfit: 2600.00, items: [], date: '15/5/2026' },
-        { id: 'VAL-10930', customer: 'Isha Ambani', phone: '9199999999', product: 'Bridal Silk Kada Set', orderQty: 12, savedGrand: '₹34,000.00', calculatedNetProfit: 7100.00, items: [], date: '19/5/2026' }
-    ];
-    localStorage.setItem('valaya_saved_v3', JSON.stringify(savedBills));
-    renderSavedBillsTable();
-    rebuildAnalyticsDashboard();
-
-    // Populate active creative workspace with an order requesting 3 sets to trigger shortage limits
+    // 4. Load a demo customer
     currentBill = {
-        id: 'VAL-STRESS99',
-        customer: 'Kiran Kumar',
-        phone: '919876543210',
-        product: 'Bridal Silk Kada Set',
-        orderQty: 3, 
-        address: '123 Main Street, Ballari, Karnataka',
-        date: new Date().toLocaleDateString('en-IN'),
-        notes: 'Urgent design request for upcoming wedding catalog shoot.',
-        courier: 120,
-        discount: 75,
-        items: [
-            { itemId: 'm1', type: 'raw-material', description: 'Zari Designer Silk Thread', quantityPerSet: 2, unitPrice: 50 },
-            { itemId: 'm2', type: 'raw-material', description: 'Golden Metal Base Kadas', quantityPerSet: 4, unitPrice: 20 }, 
-            { itemId: 'l1', type: 'labor', description: 'Labor: Tanuja (Master Designer)', quantityPerSet: 3, unitPrice: 150 },
-            { itemId: 'p1', type: 'packing', description: 'Packing: Velvet Premium Box', quantityPerSet: 1, unitPrice: 65 }
-        ]
+        id: 'VAL-DEMO', customer: 'Kiran Kumar', phone: '919876543210', address: 'Chennai', date: '14/06/2026', notes: '',
+        productList: [{ name: 'Bridal Bangle Set', qty: 1, price: 1250, netProfit: 250 }],
+        items: [{ itemId: 'rm_1', type: 'raw-material', description: 'Bangles Normal base 1 Box', quantityPerSet: 1, unitPrice: 120 }]
     };
-    
-    initWorkspaceMeta();
-    renderInvoiceItems();
-    alert('Valaya Stores High-Stress Simulator Activated!\n\n• Detailed Material/Labor subtotal pills are active.\n• Stock Deficit warning triggers on Golden Kadas (Needs 12, Stock has 10).\n• Dashboard Analytics populated with business trends.');
+
+    initWorkspaceMeta(); 
+    renderInvoiceItems(); 
+    calculateWorkspaceTotals(); // Trigger subtotal calculations
+    updateLiveDocumentTextLabels(); // Trigger right preview render
+
+    alert('DATABASE RECOVERED!\nAll 164 Gayathrism items are now in your dropdown list.');
 }
