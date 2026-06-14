@@ -350,3 +350,39 @@ th { background: #F9FAFB; color: #4B5563; position: sticky; top: 0; z-index: 1; 
 @media (max-width: 850px) {
     .three-column-container { grid-template-columns: 1fr; }
 }
+/* Styling for the new Live Production Total */
+.production-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+    border: 1px solid #BBF7D0;
+    font-weight: bold;
+    color: #166534;
+}
+
+#live-production-subtotal {
+    font-size: 1.1rem;
+    color: #059669;
+}
+/* Styling for the new Live Production Total */
+.production-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+    border: 1px solid #BBF7D0;
+    font-weight: bold;
+    color: #166534;
+}
+
+#live-production-subtotal {
+    font-size: 1.1rem;
+    color: #059669;
+}
