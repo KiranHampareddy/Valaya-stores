@@ -172,14 +172,23 @@ const MASTER_DATABASE = {
     packing: []
 };
 
-// Start the inventory by checking local storage first
-let inventory = JSON.parse(localStorage.getItem('valaya_inv_v3')) || MASTER_DATABASE;
+// --- DATA INITIALIZATION ---
+// We check if the user has a custom inventory. If not, we force-load the 164 master items.
+let savedInv = localStorage.getItem('valaya_inv_v4');
+let inventory = savedInv ? JSON.parse(savedInv) : JSON.parse(JSON.stringify(MASTER_DATABASE));
+
+// If the inventory was loaded but is missing items, merge it
+if (inventory.rawMaterials.length < 5) {
+    inventory = JSON.parse(JSON.stringify(MASTER_DATABASE));
+}
+
 let savedBills = JSON.parse(localStorage.getItem('valaya_saved_v3')) || [];
 let currentBill = JSON.parse(localStorage.getItem('valaya_bill_v3')) || { 
     id: '', customer: '', phone: '', address: '', date: '', notes: '', 
     productList: [], items: [], courier: 0, discount: 0 
 };
 
+// --- STARTUP ---
 document.addEventListener('DOMContentLoaded', () => {
     initWorkspaceMeta();
     renderInventoryTables();
@@ -195,21 +204,13 @@ function initWorkspaceMeta() {
         currentBill.id = 'VAL-' + Math.floor(100000 + Math.random() * 900000);
         currentBill.date = new Date().toLocaleDateString('en-IN');
     }
-    document.getElementById('customer-name').value = currentBill.customer || '';
-    document.getElementById('customer-phone').value = currentBill.phone || '';
-    document.getElementById('customer-address').value = currentBill.address || '';
-    document.getElementById('order-notes').value = currentBill.notes || '';
-    document.getElementById('courier-input').value = currentBill.courier || '';
-    document.getElementById('discount-input').value = currentBill.discount || '';
-
     document.getElementById('lbl-bill-id').textContent = currentBill.id;
     document.getElementById('lbl-bill-date').textContent = currentBill.date;
-    
     updateLiveDocumentTextLabels();
 }
 
 function setupCoreActionListeners() {
-    // Inventory
+    // Inventory Management
     document.getElementById('form-raw-material').addEventListener('submit', (e) => {
         e.preventDefault();
         inventory.rawMaterials.push({
@@ -247,7 +248,7 @@ function setupCoreActionListeners() {
     document.getElementById('item-type-select').addEventListener('change', populateItemDropdown);
     document.getElementById('btn-add-item').addEventListener('click', injectItemInternalList);
 
-    // Workspace Input Logic
+    // Bill Header Inputs
     document.getElementById('customer-name').addEventListener('input', (e) => { currentBill.customer = e.target.value; updateLiveDocumentTextLabels(); });
     document.getElementById('customer-phone').addEventListener('input', (e) => { currentBill.phone = e.target.value; updateLiveDocumentTextLabels(); });
     document.getElementById('customer-address').addEventListener('input', (e) => { currentBill.address = e.target.value; updateLiveDocumentTextLabels(); });
@@ -260,95 +261,79 @@ function setupCoreActionListeners() {
     setupLiveToggleLogic('expense-percentage-select', 'custom-expense-input');
     setupLiveToggleLogic('profit-percentage-select', 'custom-profit-input');
 
-    // Multi-Item Bill Logic
+    // Action Buttons
     document.getElementById('btn-add-product-to-list').addEventListener('click', pushProductToInvoiceList);
-
-    // Business Logic
     document.getElementById('btn-save-bill').addEventListener('click', commitBillToDatabaseMemory);
     document.getElementById('btn-new-bill').addEventListener('click', resetWorkspaceEngineData);
     document.getElementById('btn-print-bill').addEventListener('click', () => window.print());
     document.getElementById('btn-whatsapp-bill').addEventListener('click', buildCustomBrandedWhatsAppMessage);
     document.getElementById('search-saved-bills').addEventListener('input', renderSavedBillsTable);
-
     document.getElementById('btn-export-json').addEventListener('click', executeSystemJSONBackupExport);
     document.getElementById('btn-import-json').addEventListener('change', executeSystemJSONBackupImport);
     document.getElementById('btn-export-csv').addEventListener('click', exportLedgerToCSVFile);
     
-    // ORANGE BUTTON - Injection Logic
+    // THE ORANGE BUTTON
     document.getElementById('btn-auto-test').addEventListener('click', runFastAutomatedMockSuite);
 }
+
+// --- CORE FUNCTIONS ---
 
 function setupLiveToggleLogic(sId, iId) {
     const sel = document.getElementById(sId); const inp = document.getElementById(iId);
     sel.addEventListener('change', () => { 
         inp.style.display = sel.value === 'custom' ? 'block' : 'none'; 
-        if(sel.value !== 'custom') inp.value = ''; 
         calculateWorkspaceTotals(); 
     });
     inp.addEventListener('input', calculateWorkspaceTotals);
 }
 
-function pushProductToInvoiceList() {
-    const name = document.getElementById('product-name').value;
-    const qty = parseInt(document.getElementById('product-order-qty').value) || 1;
-    const priceText = document.getElementById('live-grand-total').textContent; 
-    const price = parseFloat(priceText.replace('₹', '')) || 0;
-
-    if (!name || name.trim() === "") { 
-        alert("Please enter a Product Name."); 
-        return; 
-    }
-
-    if (!currentBill.productList) currentBill.productList = [];
-    currentBill.productList.push({ name, qty, price, netProfit: currentBill.calculatedNetProfit || 0 });
-
-    // Wipe middle workspace for next item
-    document.getElementById('product-name').value = '';
-    document.getElementById('product-order-qty').value = '1';
-    currentBill.items = []; 
-    
-    renderInvoiceItems(); 
-    updateLiveDocumentTextLabels();
-    alert("Product added to bill preview!");
-}
-
-function updateLiveDocumentTextLabels() {
-    localStorage.setItem('valaya_bill_v3', JSON.stringify(currentBill));
-    const nameNode = document.getElementById('lbl-customer-name');
-    nameNode.textContent = currentBill.customer || "No Customer Selected";
-    document.getElementById('lbl-customer-phone').textContent = currentBill.phone ? `Phone: ${currentBill.phone}` : '';
-    document.getElementById('lbl-customer-address').textContent = currentBill.address ? `Shipping: ${currentBill.address}` : '';
-
-    const billBody = document.getElementById('bill-items-body');
-    billBody.innerHTML = '';
-    let totalBasePrice = 0;
-
-    if (currentBill.productList && currentBill.productList.length > 0) {
-        currentBill.productList.forEach((prod, index) => {
-            totalBasePrice += prod.price;
-            billBody.innerHTML += `
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 10px 5px;">
-                        <div style="font-weight: bold;">${prod.name} (x${prod.qty})</div>
-                        <button onclick="removeProductFromList(${index})" style="color: red; background: none; border: none; cursor: pointer; font-size: 0.7rem; padding: 0;">[Remove]</button>
-                    </td>
-                    <td style="text-align: right; font-weight: bold;">₹${prod.price.toFixed(2)}</td>
-                </tr>`;
+function renderInventoryTables() {
+    const build = (id, data, key) => {
+        const tbl = document.getElementById(id);
+        tbl.innerHTML = '<thead><tr><th>Name</th><th>Rate/Stock</th><th>Actions</th></tr></thead>';
+        const tbody = document.createElement('tbody');
+        data.forEach((item, idx) => {
+            let tr = document.createElement('tr');
+            let cost = key === 'rawMaterials' ? 
+                `₹${item.cost}/${item.qty}${item.unit} (Stock: ${item.stock})` : 
+                (key === 'labor' ? `₹${item.rate}/Hr` : `₹${item.price}`);
+            
+            tr.innerHTML = `
+                <td>${item.name}</td>
+                <td>${cost}</td>
+                <td>
+                    <button class="view-btn" onclick="editInvItem('${key}', ${idx})" style="background:#f59e0b; margin-right:5px;">📝</button>
+                    <button class="delete-btn" onclick="deleteInvItem('${key}', ${idx})">&times;</button>
+                </td>`;
+            tbody.appendChild(tr);
         });
-    } else {
-        billBody.innerHTML = '<tr><td colspan="2" style="color: #999; font-style: italic; padding: 20px; text-align: center;">No items added to bill yet</td></tr>';
-    }
-
-    document.getElementById('lbl-summary-base').textContent = `₹${totalBasePrice.toFixed(2)}`;
-    currentBill.courier = parseFloat(document.getElementById('courier-input').value) || 0;
-    currentBill.discount = parseFloat(document.getElementById('discount-input').value) || 0;
-    const finalGrand = (totalBasePrice + currentBill.courier) - currentBill.discount;
-    document.getElementById('lbl-summary-grand').textContent = `₹${Math.max(0, finalGrand).toFixed(2)}`;
+        tbl.appendChild(tbody);
+    };
+    build('table-raw-materials', inventory.rawMaterials, 'rawMaterials');
+    build('table-labor', inventory.labor, 'labor');
+    build('table-packing', inventory.packing, 'packing');
 }
 
-function removeProductFromList(index) {
-    currentBill.productList.splice(index, 1);
-    updateLiveDocumentTextLabels();
+function editInvItem(key, idx) {
+    let item = inventory[key][idx];
+    let newName = prompt("Update Name:", item.name);
+    if (newName === null) return;
+    item.name = newName;
+
+    if (key === 'rawMaterials') {
+        item.cost = parseFloat(prompt("Update Total Price (₹):", item.cost)) || item.cost;
+        item.stock = parseFloat(prompt("Update Current Stock Count:", item.stock)) || item.stock;
+    } else if (key === 'labor') {
+        item.rate = parseFloat(prompt("Update Hourly Rate (₹):", item.rate)) || item.rate;
+    } else {
+        item.price = parseFloat(prompt("Update Price (₹):", item.price)) || item.price;
+    }
+    saveAndSyncInventory();
+}
+
+function saveAndSyncInventory() { 
+    localStorage.setItem('valaya_inv_v4', JSON.stringify(inventory)); 
+    renderInventoryTables(); populateItemDropdown();
 }
 
 function populateItemDropdown() {
@@ -356,13 +341,9 @@ function populateItemDropdown() {
     const select = document.getElementById('item-select'); select.innerHTML = '';
     let targetArr = type === 'raw-material' ? inventory.rawMaterials : (type === 'labor' ? inventory.labor : inventory.packing);
     
-    if(targetArr.length === 0) {
-        select.innerHTML = '<option disabled selected>No data added yet</option>'; return;
-    }
     targetArr.forEach(item => {
         let opt = document.createElement('option'); opt.value = item.id;
-        opt.textContent = type === 'raw-material' ? `${item.name} (Stock: ${item.stock} ${item.unit})` :
-                          (type === 'labor' ? `${item.name} (₹${item.rate}/Hr)` : `${item.name} (₹${item.price})`);
+        opt.textContent = type === 'raw-material' ? `${item.name}` : `${item.name}`;
         select.appendChild(opt);
     });
 }
@@ -372,7 +353,7 @@ function injectItemInternalList() {
     const id = document.getElementById('item-select').value;
     const qty = parseFloat(document.getElementById('item-quantity').value);
 
-    if(!id || isNaN(qty) || qty <= 0) { alert('Assign valid metrics.'); return; }
+    if(!id || isNaN(qty) || qty <= 0) { alert('Enter valid quantity.'); return; }
 
     let itemData, desc, unitPrice, itemId;
     if (type === 'raw-material') {
@@ -399,17 +380,8 @@ function renderInvoiceItems() {
         let tr = document.createElement('tr');
         const scaledQty = item.quantityPerSet * multiplier;
         const totalCost = scaledQty * item.unitPrice;
-        
-        let alertPill = '';
-        if(item.type === 'raw-material') {
-            const originalInvItem = inventory.rawMaterials.find(x => x.id === item.itemId);
-            if(originalInvItem && originalInvItem.stock < scaledQty) {
-                alertPill = `<br><span class="stock-warning-pill">⚠️ Low Stock!</span>`;
-            }
-        }
-
         tr.innerHTML = `<td><strong>${item.type[0].toUpperCase()}</strong></td>
-        <td>${item.description}${alertPill}</td>
+        <td>${item.description}</td>
         <td>${item.quantityPerSet} sets (Tot: ${scaledQty.toFixed(1)})</td>
         <td>₹${totalCost.toFixed(2)}</td>
         <td><button class="delete-btn" onclick="removeItemFromInvoice(${index})">&times;</button></td>`;
@@ -427,7 +399,7 @@ function calculateWorkspaceTotals() {
     currentBill.items.forEach(item => {
         const scaledCost = (item.quantityPerSet * multiplier) * item.unitPrice;
         if (item.type === 'raw-material') subRaw += scaledCost;
-        else if (item.type === 'labor') subLabor += scaledCost; // Fixed typo: changed cost to scaledCost
+        else if (item.type === 'labor') subLabor += scaledCost;
         else subPacking += scaledCost;
     });
 
@@ -435,36 +407,123 @@ function calculateWorkspaceTotals() {
     document.getElementById('live-sub-labor').textContent = `₹${subLabor.toFixed(2)}`;
     document.getElementById('live-sub-packing').textContent = `₹${subPacking.toFixed(2)}`;
 
-    const operationalCombinedSubtotal = subRaw + subLabor + subPacking;
-    document.getElementById('live-production-subtotal').textContent = `₹${operationalCombinedSubtotal.toFixed(2)}`;
+    const prodTotal = subRaw + subLabor + subPacking;
+    document.getElementById('live-production-subtotal').textContent = `₹${prodTotal.toFixed(2)}`;
     
     const expSelect = document.getElementById('expense-percentage-select');
     let expPct = expSelect.value === 'custom' ? (parseFloat(document.getElementById('custom-expense-input').value)||0)/100 : parseFloat(expSelect.value);
-    const calculatedExpenseAmount = subRaw * expPct; 
-    
-    const absoluteMakingCost = operationalCombinedSubtotal + calculatedExpenseAmount;
+    const expVal = subRaw * expPct; 
     
     const profSelect = document.getElementById('profit-percentage-select');
     let profPct = profSelect.value === 'custom' ? (parseFloat(document.getElementById('custom-profit-input').value)||0)/100 : parseFloat(profSelect.value);
-    const calculatedProfitAmount = absoluteMakingCost * profPct;
+    const profVal = (prodTotal + expVal) * profPct;
 
-    const netRetailBasePrice = absoluteMakingCost + calculatedProfitAmount;
-    currentBill.calculatedNetProfit = calculatedProfitAmount;
+    const grand = prodTotal + expVal + profVal;
+    currentBill.calculatedNetProfit = profVal;
 
-    document.getElementById('live-expense-val').textContent = `₹${calculatedExpenseAmount.toFixed(2)}`;
-    document.getElementById('live-profit-val').textContent = `₹${calculatedProfitAmount.toFixed(2)}`;
-    document.getElementById('live-grand-total').textContent = `₹${netRetailBasePrice.toFixed(2)}`;
+    document.getElementById('live-expense-val').textContent = `₹${expVal.toFixed(2)}`;
+    document.getElementById('live-profit-val').textContent = `₹${profVal.toFixed(2)}`;
+    document.getElementById('live-grand-total').textContent = `₹${grand.toFixed(2)}`;
 
     updateLiveDocumentTextLabels();
+}
+
+function updateLiveDocumentTextLabels() {
+    localStorage.setItem('valaya_bill_v3', JSON.stringify(currentBill));
+    document.getElementById('lbl-customer-name').textContent = currentBill.customer || "No Customer Selected";
+    document.getElementById('lbl-customer-phone').textContent = currentBill.phone ? `Phone: ${currentBill.phone}` : '';
+    document.getElementById('lbl-customer-address').textContent = currentBill.address ? `Shipping: ${currentBill.address}` : '';
+
+    const billBody = document.getElementById('bill-items-body');
+    billBody.innerHTML = '';
+    let totalBasePrice = 0;
+
+    if (currentBill.productList && currentBill.productList.length > 0) {
+        currentBill.productList.forEach((prod, index) => {
+            totalBasePrice += prod.price;
+            billBody.innerHTML += `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px 5px;">
+                        <div style="font-weight: bold;">${prod.name} (x${prod.qty})</div>
+                        <button onclick="removeProductFromList(${index})" style="color: red; background: none; border: none; cursor: pointer; font-size: 0.7rem; padding: 0;">[Remove]</button>
+                    </td>
+                    <td style="text-align: right; font-weight: bold;">₹${prod.price.toFixed(2)}</td>
+                </tr>`;
+        });
+    }
+
+    document.getElementById('lbl-summary-base').textContent = `₹${totalBasePrice.toFixed(2)}`;
+    currentBill.courier = parseFloat(document.getElementById('courier-input').value) || 0;
+    currentBill.discount = parseFloat(document.getElementById('discount-input').value) || 0;
+    document.getElementById('lbl-summary-courier').textContent = `₹${currentBill.courier.toFixed(2)}`;
+    document.getElementById('lbl-summary-discount').textContent = `-₹${currentBill.discount.toFixed(2)}`;
+
+    const final = (totalBasePrice + currentBill.courier) - currentBill.discount;
+    document.getElementById('lbl-summary-grand').textContent = `₹${Math.max(0, final).toFixed(2)}`;
+}
+
+function pushProductToInvoiceList() {
+    const name = document.getElementById('product-name').value;
+    const qty = parseInt(document.getElementById('product-order-qty').value) || 1;
+    const priceText = document.getElementById('live-grand-total').textContent; 
+    const price = parseFloat(priceText.replace('₹', '')) || 0;
+
+    if (!name) { alert("Please enter Product Name."); return; }
+    if (!currentBill.productList) currentBill.productList = [];
+    currentBill.productList.push({ name, qty, price, netProfit: currentBill.calculatedNetProfit || 0 });
+
+    document.getElementById('product-name').value = '';
+    document.getElementById('product-order-qty').value = '1';
+    currentBill.items = []; 
+    renderInvoiceItems(); 
+    updateLiveDocumentTextLabels();
+    alert("Product added to bill!");
+}
+
+function removeProductFromList(index) {
+    currentBill.productList.splice(index, 1);
+    updateLiveDocumentTextLabels();
+}
+
+function deleteInvItem(key, idx) { inventory[key].splice(idx, 1); saveAndSyncInventory(); }
+
+function commitBillToDatabaseMemory() {
+    if(!currentBill.customer) return alert('Enter customer name.');
+    currentBill.savedGrand = document.getElementById('lbl-summary-grand').textContent;
+    let totalP = 0;
+    currentBill.productList.forEach(p => totalP += p.netProfit);
+    currentBill.totalProfitEarned = totalP;
+
+    savedBills.push({ ...currentBill });
+    localStorage.setItem('valaya_saved_v3', JSON.stringify(savedBills));
+    renderSavedBillsTable(); rebuildAnalyticsDashboard();
+    alert('Bill saved successfully!');
+}
+
+function renderSavedBillsTable() {
+    const tbody = document.querySelector('#table-saved-bills tbody'); tbody.innerHTML = '';
+    savedBills.forEach(b => {
+        let tr = document.createElement('tr');
+        tr.innerHTML = `<td>${b.id}</td><td>${b.customer}</td><td>${b.savedGrand}</td><td><button class="view-btn" onclick="loadSavedBillArchive('${b.id}')">View</button></td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+function loadSavedBillArchive(id) {
+    let target = savedBills.find(x => x.id === id);
+    if(target) { currentBill = JSON.parse(JSON.stringify(target)); initWorkspaceMeta(); renderInvoiceItems(); }
+}
+
+function resetWorkspaceEngineData() {
+    currentBill = { id: '', customer: '', phone: '', address: '', date: '', notes: '', productList: [], items: [], courier: 0, discount: 0 };
+    localStorage.removeItem('valaya_bill_v3'); initWorkspaceMeta(); renderInvoiceItems();
 }
 
 function executeSystemJSONBackupExport() {
     const packageData = { inventory, savedBills };
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(packageData));
     const dlAnchor = document.createElement('a');
-    dlAnchor.setAttribute("href", dataStr);
-    dlAnchor.setAttribute("download", `BACKUP_${Date.now()}.json`);
-    dlAnchor.click();
+    dlAnchor.setAttribute("href", dataStr); dlAnchor.setAttribute("download", `BACKUP_${Date.now()}.json`); dlAnchor.click();
 }
 
 function executeSystemJSONBackupImport(e) {
@@ -472,7 +531,7 @@ function executeSystemJSONBackupImport(e) {
     fileReader.onload = function(event) {
         const parsed = JSON.parse(event.target.result);
         inventory = parsed.inventory; savedBills = parsed.savedBills;
-        localStorage.setItem('valaya_inv_v3', JSON.stringify(inventory));
+        localStorage.setItem('valaya_inv_v4', JSON.stringify(inventory));
         localStorage.setItem('valaya_saved_v3', JSON.stringify(savedBills));
         location.reload();
     };
@@ -481,9 +540,7 @@ function executeSystemJSONBackupImport(e) {
 
 function exportLedgerToCSVFile() {
     let csvContent = "data:text/csv;charset=utf-8,ID,Date,Customer,Total,Profit\n";
-    savedBills.forEach(b => {
-        csvContent += `${b.id},${b.date},${b.customer},${b.savedGrand},${b.totalProfitEarned || 0}\n`;
-    });
+    savedBills.forEach(b => { csvContent += `${b.id},${b.date},${b.customer},${b.savedGrand},${b.totalProfitEarned || 0}\n`; });
     window.open(encodeURI(csvContent));
 }
 
@@ -498,93 +555,46 @@ function rebuildAnalyticsDashboard() {
 }
 
 function buildCustomBrandedWhatsAppMessage() {
-    let txt = `*VALAYA STORE INVOICE*\nCustomer: ${currentBill.customer}\nTotal Payable: ${document.getElementById('lbl-summary-grand').textContent}\nItems:\n`;
+    let txt = `*VALAYA STORE INVOICE*\nCustomer: ${currentBill.customer}\nTotal: ${document.getElementById('lbl-summary-grand').textContent}\nItems:\n`;
     currentBill.productList.forEach(p => txt += `• ${p.name} (x${p.qty})\n`);
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`, '_blank');
 }
 
-function renderInventoryTables() {
-    const build = (id, data, key) => {
-        const tbl = document.getElementById(id);
-        tbl.innerHTML = '<thead><tr><th>Name</th><th>Rate</th><th></th></tr></thead>';
-        const tbody = document.createElement('tbody');
-        data.forEach((item, idx) => {
-            let tr = document.createElement('tr');
-            let cost = key === 'rawMaterials' ? `₹${item.cost}/${item.qty}${item.unit}` : (key === 'labor' ? `₹${item.rate}/Hr` : `₹${item.price}`);
-            tr.innerHTML = `<td>${item.name}</td><td>${cost}</td><td><button class="delete-btn" onclick="deleteInvItem('${key}', ${idx})">&times;</button></td>`;
-            tbody.appendChild(tr);
-        });
-        tbl.appendChild(tbody);
-    };
-    build('table-raw-materials', inventory.rawMaterials, 'rawMaterials');
-    build('table-labor', inventory.labor, 'labor');
-    build('table-packing', inventory.packing, 'packing');
-}
-
-function deleteInvItem(key, idx) { inventory[key].splice(idx, 1); saveAndSyncInventory(); }
-function saveAndSyncInventory() { 
-    localStorage.setItem('valaya_inv_v3', JSON.stringify(inventory)); 
-    renderInventoryTables(); populateItemDropdown();
-}
-
-function renderSavedBillsTable() {
-    const tbody = document.querySelector('#table-saved-bills tbody'); tbody.innerHTML = '';
-    savedBills.forEach(b => {
-        let tr = document.createElement('tr');
-        tr.innerHTML = `<td>${b.id}</td><td>${b.customer}</td><td>${b.savedGrand}</td><td><button class="view-btn" onclick="loadSavedBillArchive('${b.id}')">View</button></td>`;
-        tbody.appendChild(tr);
-    });
-}
-
-function commitBillToDatabaseMemory() {
-    if(!currentBill.customer) return alert('Enter a customer name.');
-    currentBill.savedGrand = document.getElementById('lbl-summary-grand').textContent;
-    let totalP = 0;
-    currentBill.productList.forEach(p => totalP += p.netProfit);
-    currentBill.totalProfitEarned = totalP;
-
-    savedBills.push({ ...currentBill });
-    localStorage.setItem('valaya_saved_v3', JSON.stringify(savedBills));
-    renderSavedBillsTable(); rebuildAnalyticsDashboard();
-    alert('Bill saved successfully!');
-}
-
-function loadSavedBillArchive(id) {
-    let target = savedBills.find(x => x.id === id);
-    if(target) { currentBill = JSON.parse(JSON.stringify(target)); initWorkspaceMeta(); renderInvoiceItems(); }
-}
-
-function resetWorkspaceEngineData() {
-    currentBill = { id: '', customer: '', phone: '', address: '', date: '', notes: '', productList: [], items: [], courier: 0, discount: 0 };
-    localStorage.removeItem('valaya_bill_v3'); initWorkspaceMeta(); renderInvoiceItems();
-}
-
-// THE "ORANGE BUTTON" FORCE-INJECTION LOGIC
+// THE "ORANGE BUTTON" - DEMO MODE
 function runFastAutomatedMockSuite() {
-    // 1. Force OVERWRITE the existing list with the MASTER list (164 items)
+    // 1. Force Reset Inventory to 164 items if list is short
     inventory = JSON.parse(JSON.stringify(MASTER_DATABASE));
-    
-    // 2. Add some Demo Labor & Packing
     inventory.labor = [
-        { id: 'l1', name: 'Tanuja (Master)', rate: 150 },
-        { id: 'l2', name: 'Ananya', rate: 70 }
+        { id: 'l1', name: 'Sister (Designer)', rate: 150 },
+        { id: 'l2', name: 'Helper', rate: 70 }
     ];
-    inventory.packing = [{ id: 'p1', name: 'Velvet Box', unit: 'Box', price: 65 }];
-
-    // 3. Save to browser and Refresh the screen
+    inventory.packing = [{ id: 'p1', name: 'Premium Bangle Box', price: 65 }];
     saveAndSyncInventory();
 
-    // 4. Load a demo customer
-    currentBill = {
-        id: 'VAL-DEMO', customer: 'Kiran Kumar', phone: '919876543210', address: 'Chennai', date: '14/06/2026', notes: '',
-        productList: [{ name: 'Bridal Bangle Set', qty: 1, price: 1250, netProfit: 250 }],
-        items: [{ itemId: 'rm_1', type: 'raw-material', description: 'Bangles Normal base 1 Box', quantityPerSet: 1, unitPrice: 120 }]
-    };
+    // 2. Setup a Demo Bill
+    currentBill.customer = "Priyanka Roy";
+    currentBill.phone = "919988776655";
+    currentBill.address = "Sector 5, Kolkata";
+    currentBill.notes = "Special requested 2 sets of Zari designs";
 
-    initWorkspaceMeta(); 
-    renderInvoiceItems(); 
-    calculateWorkspaceTotals(); // Trigger subtotal calculations
-    updateLiveDocumentTextLabels(); // Trigger right preview render
+    // 3. Fill the "Recipe" (The stuff in the middle column)
+    currentBill.items = [
+        { itemId: 'rm_1', type: 'raw-material', description: 'Bangles Normal base', quantityPerSet: 1, unitPrice: 120 },
+        { itemId: 'rm_3', type: 'raw-material', description: 'Thread (Reel)', quantityPerSet: 2, unitPrice: 18 },
+        { itemId: 'rm_12', type: 'raw-material', description: 'White and Gold kundans', quantityPerSet: 0.5, unitPrice: 1.5 },
+        { itemId: 'l1', type: 'labor', description: 'Labor: Sister (Designer)', quantityPerSet: 1, unitPrice: 150 }
+    ];
 
-    alert('DATABASE RECOVERED!\nAll 164 Gayathrism items are now in your dropdown list.');
+    // 4. Fill the "Scaling" and "Extras"
+    document.getElementById('product-name').value = "Royal Zari Bangle Set";
+    document.getElementById('product-order-qty').value = "2"; // 2 Sets
+    document.getElementById('courier-input').value = "80";
+    document.getElementById('discount-input').value = "20";
+
+    // 5. Apply everything
+    initWorkspaceMeta();
+    renderInvoiceItems();
+    calculateWorkspaceTotals();
+    
+    alert('DEMO LOADED!\n\nI have filled in a sample customer, a "Recipe" for 1 set, and scaled it to 2 sets.\n\nYou can see how the Making Cost + Expenses + Profit = Final Price.');
 }
