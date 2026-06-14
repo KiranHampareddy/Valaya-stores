@@ -1,5 +1,4 @@
 // --- SYSTEM LOCAL RECOVERY & DATA STRUCTURE CACHES ---
-// COMPLETE GAYATHRISM ARTWORK DATABASE (164 Items)
 const MASTER_DATABASE = { 
     rawMaterials: [
         { id: 'rm_1', name: 'Bangles Normal base 1 Box', unit: 'Pcs', qty: 1, cost: 120, stock: 1000 },
@@ -173,13 +172,22 @@ const MASTER_DATABASE = {
 };
 
 // --- DATA INITIALIZATION ---
-// We check if the user has a custom inventory. If not, we force-load the 164 master items.
-let savedInv = localStorage.getItem('valaya_inv_v4');
-let inventory = savedInv ? JSON.parse(savedInv) : JSON.parse(JSON.stringify(MASTER_DATABASE));
+// FORCE UPDATE TO VERSION 6 to ensure the tablet gets the new table layout
+let savedInv = localStorage.getItem('valaya_inv_v6');
+let inventory;
 
-// If the inventory was loaded but is missing items, merge it
-if (inventory.rawMaterials.length < 5) {
+if (!savedInv) {
+    // If first time or force update, load master DB
     inventory = JSON.parse(JSON.stringify(MASTER_DATABASE));
+    // Add default labor
+    inventory.labor = [
+        { id: 'l1', name: 'Master Designer', rate: 150 },
+        { id: 'l2', name: 'Assistant', rate: 70 }
+    ];
+    inventory.packing = [{ id: 'p1', name: 'Velvet Box', price: 65 }];
+    localStorage.setItem('valaya_inv_v6', JSON.stringify(inventory));
+} else {
+    inventory = JSON.parse(savedInv);
 }
 
 let savedBills = JSON.parse(localStorage.getItem('valaya_saved_v3')) || [];
@@ -248,7 +256,7 @@ function setupCoreActionListeners() {
     document.getElementById('item-type-select').addEventListener('change', populateItemDropdown);
     document.getElementById('btn-add-item').addEventListener('click', injectItemInternalList);
 
-    // Bill Header Inputs
+    // Bill Inputs
     document.getElementById('customer-name').addEventListener('input', (e) => { currentBill.customer = e.target.value; updateLiveDocumentTextLabels(); });
     document.getElementById('customer-phone').addEventListener('input', (e) => { currentBill.phone = e.target.value; updateLiveDocumentTextLabels(); });
     document.getElementById('customer-address').addEventListener('input', (e) => { currentBill.address = e.target.value; updateLiveDocumentTextLabels(); });
@@ -272,51 +280,52 @@ function setupCoreActionListeners() {
     document.getElementById('btn-import-json').addEventListener('change', executeSystemJSONBackupImport);
     document.getElementById('btn-export-csv').addEventListener('click', exportLedgerToCSVFile);
     
-    // THE ORANGE BUTTON
     document.getElementById('btn-auto-test').addEventListener('click', runFastAutomatedMockSuite);
 }
 
-// --- CORE FUNCTIONS ---
-
-function setupLiveToggleLogic(sId, iId) {
-    const sel = document.getElementById(sId); const inp = document.getElementById(iId);
-    sel.addEventListener('change', () => { 
-        inp.style.display = sel.value === 'custom' ? 'block' : 'none'; 
-        calculateWorkspaceTotals(); 
-    });
-    inp.addEventListener('input', calculateWorkspaceTotals);
-}
-
+// --- RENDERING TABLES (FORCED REFRESH FOR TABLETS) ---
 function renderInventoryTables() {
-    const build = (id, data, key) => {
-        const tbl = document.getElementById(id);
-        tbl.innerHTML = '<thead><tr><th>Name</th><th>Rate/Stock</th><th>Actions</th></tr></thead>';
-        const tbody = document.createElement('tbody');
-        data.forEach((item, idx) => {
-            let tr = document.createElement('tr');
-            let cost = key === 'rawMaterials' ? 
-                `₹${item.cost}/${item.qty}${item.unit} (Stock: ${item.stock})` : 
-                (key === 'labor' ? `₹${item.rate}/Hr` : `₹${item.price}`);
+    const buildTable = (tableId, data, dataKey) => {
+        const table = document.getElementById(tableId);
+        // Force Header Refresh
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th style="width:50%">Item Name</th>
+                    <th style="width:30%">Rate/Stock</th>
+                    <th style="width:20%">Actions</th>
+                </tr>
+            </thead>`;
             
-            tr.innerHTML = `
+        const tbody = document.createElement('tbody');
+        data.forEach((item, index) => {
+            let row = document.createElement('tr');
+            let costString = dataKey === 'rawMaterials' ? 
+                `₹${item.cost}/${item.qty}${item.unit} (${item.stock})` : 
+                (dataKey === 'labor' ? `₹${item.rate}/Hr` : `₹${item.price}`);
+            
+            row.innerHTML = `
                 <td>${item.name}</td>
-                <td>${cost}</td>
+                <td>${costString}</td>
                 <td>
-                    <button class="view-btn" onclick="editInvItem('${key}', ${idx})" style="background:#f59e0b; margin-right:5px;">📝</button>
-                    <button class="delete-btn" onclick="deleteInvItem('${key}', ${idx})">&times;</button>
+                    <div style="display:flex; gap:8px;">
+                        <button onclick="editInvItem('${dataKey}', ${index})" style="background:#f59e0b; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">📝</button>
+                        <button onclick="deleteInvItem('${dataKey}', ${index})" style="background:#ef4444; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">&times;</button>
+                    </div>
                 </td>`;
-            tbody.appendChild(tr);
+            tbody.appendChild(row);
         });
-        tbl.appendChild(tbody);
+        table.appendChild(tbody);
     };
-    build('table-raw-materials', inventory.rawMaterials, 'rawMaterials');
-    build('table-labor', inventory.labor, 'labor');
-    build('table-packing', inventory.packing, 'packing');
+
+    buildTable('table-raw-materials', inventory.rawMaterials, 'rawMaterials');
+    buildTable('table-labor', inventory.labor, 'labor');
+    buildTable('table-packing', inventory.packing, 'packing');
 }
 
 function editInvItem(key, idx) {
     let item = inventory[key][idx];
-    let newName = prompt("Update Name:", item.name);
+    let newName = prompt("Update Item Name:", item.name);
     if (newName === null) return;
     item.name = newName;
 
@@ -331,9 +340,28 @@ function editInvItem(key, idx) {
     saveAndSyncInventory();
 }
 
+function deleteInvItem(key, idx) { 
+    if(confirm("Delete this item?")) {
+        inventory[key].splice(idx, 1); 
+        saveAndSyncInventory(); 
+    }
+}
+
 function saveAndSyncInventory() { 
-    localStorage.setItem('valaya_inv_v4', JSON.stringify(inventory)); 
-    renderInventoryTables(); populateItemDropdown();
+    localStorage.setItem('valaya_inv_v6', JSON.stringify(inventory)); 
+    renderInventoryTables(); 
+    populateItemDropdown();
+}
+
+// --- BILLING LOGIC ---
+
+function setupLiveToggleLogic(sId, iId) {
+    const sel = document.getElementById(sId); const inp = document.getElementById(iId);
+    sel.addEventListener('change', () => { 
+        inp.style.display = sel.value === 'custom' ? 'block' : 'none'; 
+        calculateWorkspaceTotals(); 
+    });
+    inp.addEventListener('input', calculateWorkspaceTotals);
 }
 
 function populateItemDropdown() {
@@ -343,7 +371,7 @@ function populateItemDropdown() {
     
     targetArr.forEach(item => {
         let opt = document.createElement('option'); opt.value = item.id;
-        opt.textContent = type === 'raw-material' ? `${item.name}` : `${item.name}`;
+        opt.textContent = item.name;
         select.appendChild(opt);
     });
 }
@@ -384,7 +412,7 @@ function renderInvoiceItems() {
         <td>${item.description}</td>
         <td>${item.quantityPerSet} sets (Tot: ${scaledQty.toFixed(1)})</td>
         <td>₹${totalCost.toFixed(2)}</td>
-        <td><button class="delete-btn" onclick="removeItemFromInvoice(${index})">&times;</button></td>`;
+        <td><button onclick="removeItemFromInvoice(${index})" style="background:none; border:none; color:red; cursor:pointer;">&times;</button></td>`;
         tbody.appendChild(tr);
     });
     calculateWorkspaceTotals();
@@ -485,8 +513,6 @@ function removeProductFromList(index) {
     updateLiveDocumentTextLabels();
 }
 
-function deleteInvItem(key, idx) { inventory[key].splice(idx, 1); saveAndSyncInventory(); }
-
 function commitBillToDatabaseMemory() {
     if(!currentBill.customer) return alert('Enter customer name.');
     currentBill.savedGrand = document.getElementById('lbl-summary-grand').textContent;
@@ -504,7 +530,7 @@ function renderSavedBillsTable() {
     const tbody = document.querySelector('#table-saved-bills tbody'); tbody.innerHTML = '';
     savedBills.forEach(b => {
         let tr = document.createElement('tr');
-        tr.innerHTML = `<td>${b.id}</td><td>${b.customer}</td><td>${b.savedGrand}</td><td><button class="view-btn" onclick="loadSavedBillArchive('${b.id}')">View</button></td>`;
+        tr.innerHTML = `<td>${b.id}</td><td>${b.customer}</td><td>${b.savedGrand}</td><td><button onclick="loadSavedBillArchive('${b.id}')" style="background:#06b6d4; color:white; border:none; padding:4px; border-radius:4px;">View</button></td>`;
         tbody.appendChild(tr);
     });
 }
@@ -516,9 +542,12 @@ function loadSavedBillArchive(id) {
 
 function resetWorkspaceEngineData() {
     currentBill = { id: '', customer: '', phone: '', address: '', date: '', notes: '', productList: [], items: [], courier: 0, discount: 0 };
-    localStorage.removeItem('valaya_bill_v3'); initWorkspaceMeta(); renderInvoiceItems();
+    localStorage.removeItem('valaya_bill_v3'); 
+    initWorkspaceMeta(); 
+    renderInvoiceItems();
 }
 
+// --- UTILS ---
 function executeSystemJSONBackupExport() {
     const packageData = { inventory, savedBills };
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(packageData));
@@ -531,7 +560,7 @@ function executeSystemJSONBackupImport(e) {
     fileReader.onload = function(event) {
         const parsed = JSON.parse(event.target.result);
         inventory = parsed.inventory; savedBills = parsed.savedBills;
-        localStorage.setItem('valaya_inv_v4', JSON.stringify(inventory));
+        localStorage.setItem('valaya_inv_v6', JSON.stringify(inventory));
         localStorage.setItem('valaya_saved_v3', JSON.stringify(savedBills));
         location.reload();
     };
@@ -562,39 +591,37 @@ function buildCustomBrandedWhatsAppMessage() {
 
 // THE "ORANGE BUTTON" - DEMO MODE
 function runFastAutomatedMockSuite() {
-    // 1. Force Reset Inventory to 164 items if list is short
+    // Force Load Demo Inventory
     inventory = JSON.parse(JSON.stringify(MASTER_DATABASE));
     inventory.labor = [
-        { id: 'l1', name: 'Sister (Designer)', rate: 150 },
+        { id: 'l1', name: 'Tanuja (Sister)', rate: 150 },
         { id: 'l2', name: 'Helper', rate: 70 }
     ];
-    inventory.packing = [{ id: 'p1', name: 'Premium Bangle Box', price: 65 }];
+    inventory.packing = [{ id: 'p1', name: 'Premium Velvet Box', price: 65 }];
     saveAndSyncInventory();
 
-    // 2. Setup a Demo Bill
+    // Fill sample bill info
     currentBill.customer = "Priyanka Roy";
     currentBill.phone = "919988776655";
-    currentBill.address = "Sector 5, Kolkata";
-    currentBill.notes = "Special requested 2 sets of Zari designs";
+    currentBill.address = "Salt Lake, Kolkata";
+    currentBill.notes = "Special Zari request with gold kundans";
 
-    // 3. Fill the "Recipe" (The stuff in the middle column)
+    // Fill sample recipe
     currentBill.items = [
         { itemId: 'rm_1', type: 'raw-material', description: 'Bangles Normal base', quantityPerSet: 1, unitPrice: 120 },
         { itemId: 'rm_3', type: 'raw-material', description: 'Thread (Reel)', quantityPerSet: 2, unitPrice: 18 },
-        { itemId: 'rm_12', type: 'raw-material', description: 'White and Gold kundans', quantityPerSet: 0.5, unitPrice: 1.5 },
-        { itemId: 'l1', type: 'labor', description: 'Labor: Sister (Designer)', quantityPerSet: 1, unitPrice: 150 }
+        { itemId: 'rm_12', type: 'raw-material', description: 'White and Gold kundans', quantityPerSet: 1, unitPrice: 1.5 },
+        { itemId: 'l1', type: 'labor', description: 'Labor: Sister Designer', quantityPerSet: 1.5, unitPrice: 150 }
     ];
 
-    // 4. Fill the "Scaling" and "Extras"
-    document.getElementById('product-name').value = "Royal Zari Bangle Set";
-    document.getElementById('product-order-qty').value = "2"; // 2 Sets
-    document.getElementById('courier-input').value = "80";
-    document.getElementById('discount-input').value = "20";
+    document.getElementById('product-name').value = "Royal Bridal Kada Set";
+    document.getElementById('product-order-qty').value = "2";
+    document.getElementById('courier-input').value = "100";
+    document.getElementById('discount-input').value = "50";
 
-    // 5. Apply everything
     initWorkspaceMeta();
     renderInvoiceItems();
     calculateWorkspaceTotals();
     
-    alert('DEMO LOADED!\n\nI have filled in a sample customer, a "Recipe" for 1 set, and scaled it to 2 sets.\n\nYou can see how the Making Cost + Expenses + Profit = Final Price.');
+    alert('DEMO MODE ACTIVE!\n\nThe edit (📝) buttons are now visible on the left side.');
 }
