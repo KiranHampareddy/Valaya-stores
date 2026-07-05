@@ -290,8 +290,10 @@ function setupCoreActionListeners() {
 
     // Action Buttons
     document.getElementById('btn-add-product-to-list').addEventListener('click', pushProductToInvoiceList);
+    document.getElementById('btn-reset-current-product').addEventListener('click', resetCurrentProductBuilder);
     document.getElementById('btn-save-bill').addEventListener('click', commitBillToDatabaseMemory);
     document.getElementById('btn-new-bill').addEventListener('click', resetWorkspaceEngineData);
+    document.getElementById('btn-start-fresh').addEventListener('click', executeStartFreshAction);
     document.getElementById('btn-print-bill').addEventListener('click', () => window.print());
     document.getElementById('btn-whatsapp-bill').addEventListener('click', buildCustomBrandedWhatsAppMessage);
     document.getElementById('btn-copy-invoice').addEventListener('click', copyInvoiceTextToClipboard);
@@ -300,7 +302,6 @@ function setupCoreActionListeners() {
     document.getElementById('btn-export-json').addEventListener('click', executeSystemJSONBackupExport);
     document.getElementById('btn-import-json').addEventListener('change', executeSystemJSONBackupImport);
     document.getElementById('btn-export-csv').addEventListener('click', exportLedgerToCSVFile);
-    document.getElementById('btn-auto-test').addEventListener('click', runFastAutomatedMockSuite);
 }
 
 // --- RENDERING TABLES (FORCED REFRESH FOR TABLETS) ---
@@ -752,19 +753,27 @@ function loadSavedBillArchive(id) {
     document.getElementById('courier-input').value = currentBill.courier || 0;
     document.getElementById('discount-input').value = currentBill.discount || 0;
 
-    initWorkspaceMeta();
+initWorkspaceMeta();
+    renderInvoiceItems();
+}
+
+function resetCurrentProductBuilder() {
+    if (currentBill.items.length > 0) {
+        if (!confirm("Clear the current product recipe and name?")) return;
+    }
+    currentBill.items = [];
+    document.getElementById('product-name').value = '';
+    document.getElementById('product-order-qty').value = '1';
     renderInvoiceItems();
     calculateWorkspaceTotals();
-    updateLiveDocumentTextLabels();
-
-    alert("Bill loaded successfully for editing.");
 }
 
 function resetWorkspaceEngineData() {
+    // Clear everything
     currentBill = { id: '', customer: '', phone: '', address: '', date: '', notes: '', productList: [], items: [], courier: 0, discount: 0 };
     localStorage.removeItem('valaya_bill_v3');
-
-    // Clears only the workspace form. Does NOT touch inventory, analytics, or saved bills.
+    
+    // UI Cleanup
     document.getElementById('customer-name').value = '';
     document.getElementById('customer-phone').value = '';
     document.getElementById('customer-address').value = '';
@@ -775,9 +784,19 @@ function resetWorkspaceEngineData() {
     document.getElementById('discount-input').value = '';
     document.getElementById('returning-customer-info').style.display = 'none';
 
+    // Regenerate ID and reset workspace
     initWorkspaceMeta();
     renderInvoiceItems();
+    calculateWorkspaceTotals();
 }
+
+function executeStartFreshAction() {
+    if (!confirm("WARNING: This will delete the entire current draft and start a completely blank invoice. Continue?")) return;
+    resetWorkspaceEngineData();
+    alert("System reset. Ready for new invoice.");
+}
+
+// --- UTILS ---
 
 // --- UTILS ---
 function executeSystemJSONBackupExport() {
