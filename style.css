@@ -32,25 +32,6 @@ header {
     box-sizing: border-box;
 }
 
-.test-accelerator-banner {
-    background: #FEF3C7;
-    padding: 8px;
-    text-align: center;
-    border-bottom: 1px solid #FCD34D;
-}
-
-.test-accelerator-banner button {
-    background: #D97706;
-    color: white;
-    font-weight: bold;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.95rem;
-}
-.test-accelerator-banner button:hover { background: #B45309; }
-
 .three-column-container {
     display: grid;
     grid-template-columns: 1.1fr 1.4fr 1.1fr;
@@ -188,6 +169,7 @@ th { background: #F9FAFB; color: #4B5563; position: sticky; top: 0; z-index: 1; 
 #btn-export-csv:hover { background: #047857; }
 
 /* BUSINESS ANALYTICS SYSTEM DESIGN */
+/* BUSINESS ANALYTICS SYSTEM DESIGN */
 .analytics-section {
     background: #FAFAFA;
     border: 1px solid var(--border);
@@ -195,7 +177,34 @@ th { background: #F9FAFB; color: #4B5563; position: sticky; top: 0; z-index: 1; 
     padding: 10px;
     margin-top: 15px;
 }
-.analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.analytics-section summary {
+    cursor: pointer;
+    list-style: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+}
+.analytics-section summary::-webkit-details-marker {
+    display: none;
+}
+.analytics-section summary h3 {
+    margin: 0;
+    flex: 1;
+}
+.analytics-section summary::after {
+    content: '▼ VIEW';
+    font-size: 0.7rem;
+    background: var(--primary);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+.analytics-section details[open] summary::after {
+    content: '▲ HIDE';
+    background: #6B7280;
+}
+.analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; margin-top: 10px; }
 .stat-card {
     background: white;
     border: 1px solid var(--border);
@@ -305,11 +314,15 @@ th { background: #F9FAFB; color: #4B5563; position: sticky; top: 0; z-index: 1; 
 }
 #live-grand-total { color: #86EFAC; }
 
-.action-buttons-rack { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.action-buttons-rack { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
 .btn-blue { background: var(--primary); color: white; padding: 10px; cursor: pointer;}
 .btn-blue:hover { background: var(--primary-dark); }
 .btn-gray { background: #E5E7EB; color: #374151; padding: 10px; cursor: pointer;}
 .btn-gray:hover { background: #D1D5DB; }
+.btn-orange { background: #f59e0b; color: white; padding: 10px; cursor: pointer; }
+.btn-orange:hover { background: #d97706; }
+.btn-red { background: #ef4444; color: white; padding: 10px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold;}
+.btn-red:hover { background: #dc2626; }
 .btn-blue-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); font-weight: bold; border-radius: 4px; cursor: pointer;}
 .btn-blue-outline:hover { background: #EFF6FF; }
 .btn-whatsapp { background: var(--whatsapp); color: white; padding: 12px; font-size: 1rem; cursor: pointer;}
