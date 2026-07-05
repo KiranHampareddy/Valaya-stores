@@ -27,6 +27,9 @@ header {
     padding: 1rem;
     text-align: center;
     border-bottom: 3px solid var(--primary-dark);
+
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .test-accelerator-banner {
@@ -343,14 +346,23 @@ th { background: #F9FAFB; color: #4B5563; position: sticky; top: 0; z-index: 1; 
     .column-left, .column-middle, .customer-view-actions, .test-accelerator-banner, header { display: none !important; }
     .customer-invoice-document { border: none; padding: 0; }
 }
+/* Tablet and Desktop Layout Fix */
 @media (max-width: 1300px) {
-    .three-column-container { grid-template-columns: 1.2fr 1.5fr; }
-    .column-left { grid-column: 1 / -1; }
+
+    .three-column-container {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+.column-left,
+    .column-middle,
+    .column-right {
+        flex: 0 0 380px;
+    }
 }
-@media (max-width: 850px) {
-    .three-column-container { grid-template-columns: 1fr; }
-}
-/* Styling for the new Live Production Total */
+
+/* Styling for the Live Production Total */
 .production-total-row {
     display: flex;
     justify-content: space-between;
@@ -368,21 +380,43 @@ th { background: #F9FAFB; color: #4B5563; position: sticky; top: 0; z-index: 1; 
     font-size: 1.1rem;
     color: #059669;
 }
-/* Styling for the new Live Production Total */
-.production-total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #ffffff;
-    padding: 10px;
-    margin-bottom: 12px;
-    border-radius: 4px;
-    border: 1px solid #BBF7D0;
-    font-weight: bold;
-    color: #166534;
+/* --- TABLET USABILITY UPGRADE (larger touch targets, req #7) --- */
+button, .custom-file-upload, #btn-export-json, #btn-export-csv {
+    min-height: 44px;
 }
 
-#live-production-subtotal {
-    font-size: 1.1rem;
-    color: #059669;
+.action-buttons-rack button,
+.customer-view-actions button,
+.btn-whatsapp {
+    min-height: 48px;
+    font-size: 1rem;
+}
+
+.action-buttons-rack {
+    gap: 14px;
+}
+
+/* WhatsApp 3-action row (req #1) */
+.whatsapp-action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+/* Product list management block (req #4) */
+.product-list-block {
+    margin-top: 12px;
+}
+
+/* Returning customer badge (req #9) */
+.returning-customer-badge {
+    margin-top: 6px;
+    padding: 6px 8px;
+    background: #FEF3C7;
+    border: 1px solid #FCD34D;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #92400E;
+    font-weight: bold;
 }
