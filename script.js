@@ -478,10 +478,6 @@ const discount =
         document.getElementById('discount-input').value
     ) || 0;
 
-const grand =
-    productValue +
-    courier -
-    discount;
     currentBill.calculatedNetProfit = profVal;
 
     document.getElementById('live-expense-val').textContent = `₹${expVal.toFixed(2)}`;
@@ -490,6 +486,14 @@ const grand =
     'live-product-total'
 ).textContent =
     `₹${productValue.toFixed(2)}`;
+
+    // Courier and discount apply ONCE to the whole invoice, based on the
+    // products already added to the bill list — not the single product
+    // currently being built above (that's shown separately as "Item Total").
+    let runningProductsTotal = 0;
+    (currentBill.productList || []).forEach(p => runningProductsTotal += (p.price || 0));
+
+    const runningGrand = runningProductsTotal + courier - discount;
 
 document.getElementById(
     'live-courier-total'
@@ -500,7 +504,9 @@ document.getElementById(
     'live-discount-total'
 ).textContent =
     `-₹${discount.toFixed(2)}`;
-    document.getElementById('live-grand-total').textContent = `₹${grand.toFixed(2)}`;
+
+    document.getElementById('live-products-running-total').textContent = `₹${runningProductsTotal.toFixed(2)}`;
+    document.getElementById('live-grand-total').textContent = `₹${runningGrand.toFixed(2)}`;
 
     updateLiveDocumentTextLabels();
 }
@@ -577,7 +583,10 @@ else if(currentBill.items.length > 0){
 function pushProductToInvoiceList() {
     const name = document.getElementById('product-name').value;
     const qty = parseInt(document.getElementById('product-order-qty').value) || 1;
-    const priceText = document.getElementById('live-grand-total').textContent; 
+     // Item price = production cost + expenses + profit ONLY.
+    // Courier/discount are invoice-level and must never be baked into a
+    // single product's price, or they'd get counted once per product.
+    const priceText = document.getElementById('live-product-total').textContent; 
     const price = parseFloat(priceText.replace('₹', '')) || 0;
 
     if (!name) { alert("Please enter Product Name."); return; }
@@ -604,7 +613,7 @@ function removeProductFromList(index) {
     if (!product) return;
     if (!confirm(`Remove "${product.name}" from this invoice?`)) return;
     currentBill.productList.splice(index, 1);
-    updateLiveDocumentTextLabels();
+    calculateWorkspaceTotals();
 }
 
 function duplicateProductInList(index) {
@@ -613,7 +622,7 @@ function duplicateProductInList(index) {
     const copy = JSON.parse(JSON.stringify(product));
     copy.id = 'prod_' + Date.now();
     currentBill.productList.splice(index + 1, 0, copy);
-    updateLiveDocumentTextLabels();
+    calculateWorkspaceTotals();
 }
 
 function editProductInList(index) {
