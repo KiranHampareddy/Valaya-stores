@@ -111,6 +111,14 @@
                         <span id="stat-profit" class="stat-val profit-green">₹0.00</span>
                     </div>
                 </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Orders Completed</span>
+                         <span id="stat-orders" class="stat-val">0</span>
+                </div>
+                <div class="stat-card">
+                         <span class="stat-label">Products Sold</span>
+                        <span id="stat-products" class="stat-val">0</span>
+            </div>
                 <div class="stat-card single-wide">
                     <span class="stat-label">Top Selling Catalog Design Product</span>
                     <span id="stat-popular" class="stat-val option-blue">None Tracked</span>
@@ -119,16 +127,17 @@
         </section>
 
         <section class="panel column-middle">
-            <h2>Invoice Creator</h2>
+            <h2>Customer Order</h2>
             <div class="invoice-header-form">
                 <div class="form-row">
                     <div>
                         <label>Customer Name:</label>
                         <input type="text" id="customer-name" placeholder="Kiran Kumar">
                     </div>
-                    <div>
+                    =<div>
                         <label>WhatsApp Phone Number:</label>
                         <input type="text" id="customer-phone" placeholder="919876543210">
+                        <div id="returning-customer-info" class="returning-customer-badge" style="display:none;"></div>
                     </div>
                 </div>
                 <div class="form-row">
@@ -150,11 +159,27 @@
                     <textarea id="order-notes" rows="2" placeholder="Special sizes, color combinations, or gemstone requests..."></textarea>
                 </div>
             </div>
-            
-            <div style="margin-top: 15px;">
-                <button id="btn-add-product-to-list" type="button" style="background: #6366f1; color: white; padding: 12px; width: 100%; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem;">
-                    ➕ Add This Item to Final Bill
-                </button>
+                <div style="margin-top: 15px; margin-bottom: 20px;">
+                    <button id="btn-add-product-to-list" type="button" style="background: #6366f1; color: white; padding: 12px; width: 100%; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        ➕ Add Current Product to Bill List
+                    </button>
+                </div>
+
+            <div class="product-list-block" id="product-list-block" style="display:none;">
+                <h3>🧾 Products Added to This Invoice</h3>
+                <div class="table-wrapper">
+                    <table id="table-product-list">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="item-adder-block">
@@ -202,12 +227,12 @@
                         <span id="live-sub-packing" class="pill-val">₹0.00</span>
                     </div>
                 </div>
-
+                 <!-- START OF NEW TOTAL FIELD -->
                 <div class="production-total-row">
-                    <span>Current Item Making Cost:</span>
+                    <span>Subtotal (Materials + Labor + Packing):</span>
                     <span id="live-production-subtotal">₹0.00</span>
                 </div>
-
+                <!-- END OF NEW TOTAL FIELD -->
                 <div class="live-card-row">
                     <div class="input-block">
                         <label>Other Expenses (% of Raw Material):</label>
@@ -260,20 +285,34 @@
                     </div>
                 </div>
 
-                <div class="live-card-total-strip">
-                    <span>PRICE FOR THIS ITEM:</span>
-                    <span id="live-grand-total">₹0.00</span>
-                </div>
-            </div>
+                <div class="production-total-row">
+    <span>Live Product Value:</span>
+    <span id="live-product-total">₹0.00</span>
+</div>
+
+<div class="production-total-row">
+    <span>Courier Charges:</span>
+    <span id="live-courier-total">₹0.00</span>
+</div>
+
+<div class="production-total-row">
+    <span>Discount Applied:</span>
+    <span id="live-discount-total">₹0.00</span>
+</div>
+
+<div class="live-card-total-strip">
+    <span>LIVE FINAL BILL VALUE:</span>
+    <span id="live-grand-total">₹0.00</span>
+</div>
 
             <div class="action-buttons-rack">
-                <button id="btn-save-bill" class="btn-blue">Final Save & Update History</button>
-                <button id="btn-new-bill" class="btn-gray">Reset Workspace</button>
+                <button id="btn-save-bill" class="btn-blue">✅ Finalize Invoice</button>
+                <button id="btn-new-bill" class="btn-gray">🔄 New Customer</button>
             </div>
         </section>
 
         <section class="panel column-right">
-            <h2>Final Customer Preview</h2>
+            <h2>Invoice Preview</h2>
             <div class="customer-invoice-document" id="invoice-print-area">
                 <div class="bill-doc-header">
                     <div class="brand-title">Valaya Store</div>
@@ -300,14 +339,14 @@
                             </tr>
                         </thead>
                         <tbody id="bill-items-body">
-                            <!-- Items list here -->
+                            <!-- Items will list here automatically -->
                         </tbody>
                     </table>
                 </div>
 
                 <div class="bill-doc-summary-block">
                     <div class="doc-summary-row">
-                        <span>Items Subtotal:</span>
+                        <span>Product Base Value:</span>
                         <span id="lbl-summary-base">₹0.00</span>
                     </div>
                     <div class="doc-summary-row" id="row-lbl-courier">
@@ -326,13 +365,17 @@
                 
                 <div class="bill-doc-footer">
                     Thank you for supporting hand-crafted art! ✨<br>
-                    Follow us on Instagram: <strong>@valaya_store</strong>
+                    Follow us on Instagram for new catalog models: <strong>@valaya_store</strong>
                 </div>
             </div>
 
             <div class="customer-view-actions">
-                <button id="btn-print-bill" class="btn-blue-outline">🖨️ Print Invoice</button>
-                <button id="btn-whatsapp-bill" class="btn-whatsapp">💬 Share via WhatsApp</button>
+                <button id="btn-print-bill" class="btn-blue-outline">🖨️ Print Pure Paper Invoice</button>
+                <div class="whatsapp-action-row">
+                    <button id="btn-copy-invoice" class="btn-gray">📋 Copy Invoice</button>
+                    <button id="btn-open-whatsapp" class="btn-gray">💬 Open WhatsApp</button>
+                </div>
+                <button id="btn-whatsapp-bill" class="btn-whatsapp">✅ Send To Customer</button>
             </div>
         </section>
     </main>
