@@ -420,3 +420,65 @@ button, .custom-file-upload, #btn-export-json, #btn-export-csv {
     color: #92400E;
     font-weight: bold;
 }
+/* --- WORKFLOW CARDS: numbered steps for easy understanding --- */
+.workflow-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 16px;
+}
+.workflow-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.customer-details-card { background: #F5F3FF; border-color: #DDD6FE; }
+.customer-details-card .step-badge { background: #7C3AED; }
+
+.product-entry-card { background: #FFF7ED; border-color: #FED7AA; }
+.product-entry-card .step-badge { background: #EA580C; }
+
+.margin-controls-card.workflow-card .step-badge { background: #16A34A; }
+
+.product-list-block.workflow-card { background: #F0F9FF; border-color: #BAE6FD; }
+.product-list-block.workflow-card .step-badge { background: #0284C7; }
+
+.invoice-totals-card.workflow-card .step-badge { background: #2563EB; }
+
+/* --- RUNNING TOTAL: the one number that should jump out --- */
+.running-total-showcase {
+    margin-top: 14px;
+    padding: 18px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #166534, #15803D);
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(22, 101, 52, 0.3);
+}
+.running-total-label {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #D1FAE5;
+    margin-bottom: 4px;
+}
+.running-total-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #86EFAC;
+}
