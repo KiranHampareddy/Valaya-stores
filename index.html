@@ -127,91 +127,79 @@
         </section>
 
         <section class="panel column-middle">
-            <h2>Customer Order</h2>
-            <div class="invoice-header-form">
-                <div class="form-row">
-                    <div>
-                        <label>Customer Name:</label>
-                        <input type="text" id="customer-name" placeholder="Kiran Kumar">
-                    </div>
-                    =<div>
-                        <label>WhatsApp Phone Number:</label>
-                        <input type="text" id="customer-phone" placeholder="919876543210">
-                        <div id="returning-customer-info" class="returning-customer-badge" style="display:none;"></div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div>
-                        <label>Product Name (Finished Set Design):</label>
-                        <input type="text" id="product-name" placeholder="Bridal Silk Kada Set">
-                    </div>
-                    <div>
-                        <label class="highlight-label">🔥 Set Order Quantity Multiplier:</label>
-                        <input type="number" id="product-order-qty" min="1" value="1" class="multiplier-input">
-                    </div>
-                </div>
-                <div>
-                    <label>Shipping Destination Address:</label>
-                    <input type="text" id="customer-address" placeholder="Enter complete shipping destination address">
-                </div>
-                <div>
-                    <label>Customization & Processing Notes:</label>
-                    <textarea id="order-notes" rows="2" placeholder="Special sizes, color combinations, or gemstone requests..."></textarea>
-                </div>
-            </div>
-                <div style="margin-top: 15px; margin-bottom: 20px;">
-                    <button id="btn-add-product-to-list" type="button" style="background: #6366f1; color: white; padding: 12px; width: 100%; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                        ➕ Add Current Product to Bill List
-                    </button>
-                </div>
+<h2>Customer Order</h2>
 
-            <div class="product-list-block" id="product-list-block" style="display:none;">
-                <h3>🧾 Products Added to This Invoice</h3>
-                <div class="table-wrapper">
-                    <table id="table-product-list">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Qty</th>
-                                <th>Price</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+            <div class="workflow-card customer-details-card">
+                <h3><span class="step-badge">1</span> Customer Details</h3>
+                <div class="invoice-header-form">
+                    <div class="form-row">
+                        <div>
+                            <label>Customer Name:</label>
+                            <input type="text" id="customer-name" placeholder="Kiran Kumar">
+                        </div>
+                        <div>
+                            <label>WhatsApp Phone Number:</label>
+                            <input type="text" id="customer-phone" placeholder="919876543210">
+                            <div id="returning-customer-info" class="returning-customer-badge" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Shipping Destination Address:</label>
+                        <input type="text" id="customer-address" placeholder="Enter complete shipping destination address">
+                    </div>
+                    <div>
+                        <label>Customization & Processing Notes:</label>
+                        <textarea id="order-notes" rows="2" placeholder="Special sizes, color combinations, or gemstone requests..."></textarea>
+                    </div>
                 </div>
             </div>
 
-            <div class="item-adder-block">
-                <h3>Single-Set Material & Workmanship Blueprint</h3>
-                <p class="help-text-small">Design the recipe for <strong>ONE SINGLE SET</strong>. The multiplier box above scales everything automatically!</p>
-                <div class="adder-controls">
-                    <select id="item-type-select">
-                        <option value="raw-material">Raw Material</option>
-                        <option value="labor">Labor Rate</option>
-                        <option value="packing">Packing Supply</option>
-                    </select>
-                    <select id="item-select"></select>
-                    <input type="number" id="item-quantity" placeholder="Qty/Hrs" min="0" step="any">
-                    <button id="btn-add-item">Add Item</button>
+            <div class="workflow-card product-entry-card">
+                <h3><span class="step-badge">2</span> What Are They Ordering?</h3>
+                <div class="invoice-header-form">
+                    <div class="form-row">
+                        <div>
+                            <label>Product Name (Finished Set Design):</label>
+                            <input type="text" id="product-name" placeholder="Bridal Silk Kada Set">
+                        </div>
+                        <div>
+                            <label class="highlight-label">🔥 Set Order Quantity Multiplier:</label>
+                            <input type="number" id="product-order-qty" min="1" value="1" class="multiplier-input">
+                        </div>
+                    </div>
                 </div>
+
+                <div class="item-adder-block">
+                    <h3>Single-Set Material & Workmanship Blueprint</h3>
+                    <p class="help-text-small">Design the recipe for <strong>ONE SINGLE SET</strong>. The multiplier box above scales everything automatically!</p>
+                    <div class="adder-controls">
+                        <select id="item-type-select">
+                            <option value="raw-material">Raw Material</option>
+                            <option value="labor">Labor Rate</option>
+                            <option value="packing">Packing Supply</option>
+                        </select>
+                        <select id="item-select"></select>
+                        <input type="number" id="item-quantity" placeholder="Qty/Hrs" min="0" step="any">
+                        <button id="btn-add-item">Add Item</button>
+                    </div>
+                </div>
+
+                <table id="invoice-items-table" class="internal-breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Item Description</th>
+                            <th>Qty (Per Set)</th>
+                            <th>Scaled Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
 
-            <table id="invoice-items-table" class="internal-breakdown-table">
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Item Description</th>
-                        <th>Qty (Per Set)</th>
-                        <th>Scaled Total</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-
-            <div class="margin-controls-card">
-                <h3>Financial Margins & Live Tracking</h3>
+            <div class="workflow-card margin-controls-card">
+                <h3><span class="step-badge">3</span> Pricing & Margin</h3>
                 
                 <div class="detailed-subtotals-strip">
                     <div class="subtotal-pill">
@@ -227,12 +215,10 @@
                         <span id="live-sub-packing" class="pill-val">₹0.00</span>
                     </div>
                 </div>
-                 <!-- START OF NEW TOTAL FIELD -->
                 <div class="production-total-row">
                     <span>Subtotal (Materials + Labor + Packing):</span>
                     <span id="live-production-subtotal">₹0.00</span>
                 </div>
-                <!-- END OF NEW TOTAL FIELD -->
                 <div class="live-card-row">
                     <div class="input-block">
                         <label>Other Expenses (% of Raw Material):</label>
@@ -274,6 +260,38 @@
                     </div>
                 </div>
 
+                <div class="production-total-row item-total-highlight">
+                    <span>Item Total (This Product):</span>
+                    <span id="live-product-total">₹0.00</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px; margin-bottom: 20px;">
+                    <button id="btn-add-product-to-list" type="button" style="background: #6366f1; color: white; padding: 12px; width: 100%; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        ➕ Add Current Product to Bill List
+                    </button>
+                </div>
+
+            <div class="workflow-card product-list-block" id="product-list-block" style="display:none;">
+                <h3><span class="step-badge">4</span> Products Added to This Invoice</h3>
+                <div class="table-wrapper">
+                    <table id="table-product-list">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="workflow-card invoice-totals-card">
+                <h3><span class="step-badge">5</span> Courier, Discount & Running Total</h3>
+
                 <div class="live-card-row simple-split">
                     <div>
                         <label>Courier/Shipping Charges (₹):</label>
@@ -286,24 +304,25 @@
                 </div>
 
                 <div class="production-total-row">
-    <span>Live Product Value:</span>
-    <span id="live-product-total">₹0.00</span>
-</div>
+                    <span>Products Total (All Items Added):</span>
+                    <span id="live-products-running-total">₹0.00</span>
+                </div>
 
-<div class="production-total-row">
-    <span>Courier Charges:</span>
-    <span id="live-courier-total">₹0.00</span>
-</div>
+                <div class="production-total-row">
+                    <span>Courier Charges:</span>
+                    <span id="live-courier-total">₹0.00</span>
+                </div>
 
-<div class="production-total-row">
-    <span>Discount Applied:</span>
-    <span id="live-discount-total">₹0.00</span>
-</div>
+                <div class="production-total-row">
+                    <span>Discount Applied:</span>
+                    <span id="live-discount-total">₹0.00</span>
+                </div>
 
-<div class="live-card-total-strip">
-    <span>LIVE FINAL BILL VALUE:</span>
-    <span id="live-grand-total">₹0.00</span>
-</div>
+                <div class="running-total-showcase">
+                    <span class="running-total-label">Running Invoice Total</span>
+                    <span id="live-grand-total" class="running-total-value">₹0.00</span>
+                </div>
+            </div>
 
             <div class="action-buttons-rack">
                 <button id="btn-save-bill" class="btn-blue">✅ Finalize Invoice</button>
