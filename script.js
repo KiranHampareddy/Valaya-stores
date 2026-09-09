@@ -1,11 +1,10 @@
-
 // --- SYSTEM LOCAL RECOVERY & DATA STRUCTURE CACHES ---
 const MASTER_DATABASE = { 
     rawMaterials: [
-        { id: 'rm_1a', name: 'Bangles, normal box, round, 1 cut', unit: 'Pairs', qty: 12, cost: 120, stock: 1000 },
-        { id: 'rm_1b', name: 'Bangles, normal box, round, 2 cut', unit: 'Pairs', qty: 24, cost: 120, stock: 1000 },
-        { id: 'rm_1c', name: 'Bangles, normal box, round, 4 cut', unit: 'Pairs', qty: 36, cost: 120, stock: 1000 },
-        { id: 'rm_1d', name: 'Bangles, normal box, round, 6 cut', unit: 'Pairs', qty: 48, cost: 120, stock: 1000 },
+        { id: 'rm_1a', name: 'Bangles, normal box, round, 1 cut', unit: 'Piece', qty: 12, cost: 120, stock: 1000 },
+        { id: 'rm_1b', name: 'Bangles, normal box, round, 2 cut', unit: 'Piece', qty: 24, cost: 120, stock: 1000 },
+        { id: 'rm_1c', name: 'Bangles, normal box, round, 4 cut', unit: 'Piece', qty: 36, cost: 120, stock: 1000 },
+        { id: 'rm_1d', name: 'Bangles, normal box, round, 6 cut', unit: 'Piece', qty: 48, cost: 120, stock: 1000 },
         { id: 'rm_2a', name: 'Bangles, flat box, 1 cut', unit: 'Pcs', qty: 12, cost: 130, stock: 1000 },
         { id: 'rm_2b', name: 'Bangles, flat box, 2 cut', unit: 'Pcs', qty: 24, cost: 130, stock: 1000 },
         { id: 'rm_2c', name: 'Bangles, flat box, 4 cut', unit: 'Pcs', qty: 36, cost: 130, stock: 1000 },
@@ -81,7 +80,7 @@ let inventory;
 
 if (!savedInv) {
     inventory = JSON.parse(JSON.stringify(MASTER_DATABASE));
-    localStorage.setItem('valaya_inv_v10', JSON.stringify(inventory));
+    localStorage.setItem('valaya_inv_v9', JSON.stringify(inventory));
 } else {
     inventory = JSON.parse(savedInv);
 }
@@ -262,7 +261,7 @@ function deleteInvItem(key, idx) {
 }
 
 function saveAndSyncInventory() { 
-    localStorage.setItem('valaya_inv_v10', JSON.stringify(inventory)); 
+    localStorage.setItem('valaya_inv_v9', JSON.stringify(inventory)); 
     renderInventoryTables(); 
     populateItemDropdown();
 }
@@ -561,7 +560,7 @@ function executeSystemJSONBackupImport(e) {
     fileReader.onload = function(event) {
         const parsed = JSON.parse(event.target.result);
         inventory = parsed.inventory; savedBills = parsed.savedBills;
-        localStorage.setItem('valaya_inv_v10', JSON.stringify(inventory));
+        localStorage.setItem('valaya_inv_v9', JSON.stringify(inventory));
         localStorage.setItem('valaya_saved_v3', JSON.stringify(savedBills));
         location.reload();
     };
