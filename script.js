@@ -75,13 +75,13 @@ const MASTER_DATABASE = {
 };
 
 // --- DATA INITIALIZATION ---
-// FORCE UPDATE TO VERSION 9 to trigger fresh load of new items
-let savedInv = localStorage.getItem('valaya_inv_v9');
+// FORCE UPDATE TO VERSION 10 to trigger fresh load of new items
+let savedInv = localStorage.getItem('valaya_inv_v10');
 let inventory;
 
 if (!savedInv) {
     inventory = JSON.parse(JSON.stringify(MASTER_DATABASE));
-    localStorage.setItem('valaya_inv_v9', JSON.stringify(inventory));
+    localStorage.setItem('valaya_inv_v10', JSON.stringify(inventory));
 } else {
     inventory = JSON.parse(savedInv);
 }
@@ -262,7 +262,7 @@ function deleteInvItem(key, idx) {
 }
 
 function saveAndSyncInventory() { 
-    localStorage.setItem('valaya_inv_v9', JSON.stringify(inventory)); 
+    localStorage.setItem('valaya_inv_v10', JSON.stringify(inventory)); 
     renderInventoryTables(); 
     populateItemDropdown();
 }
@@ -561,7 +561,7 @@ function executeSystemJSONBackupImport(e) {
     fileReader.onload = function(event) {
         const parsed = JSON.parse(event.target.result);
         inventory = parsed.inventory; savedBills = parsed.savedBills;
-        localStorage.setItem('valaya_inv_v9', JSON.stringify(inventory));
+        localStorage.setItem('valaya_inv_v10', JSON.stringify(inventory));
         localStorage.setItem('valaya_saved_v3', JSON.stringify(savedBills));
         location.reload();
     };
